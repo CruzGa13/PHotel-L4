@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// CLIENTE -----------------------------------------------------------------###########################################
+model Cliente {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  dni         String    @unique
+  email       String    @unique
+  telefono    String?
+  direccion   String?
+  estado      Boolean   @default(true)
+  fechaAlta   DateTime  @default(now())
+  reservas    Reserva[]
+}
+
+// ADMINISTRADOR -----------------------------------------------------------###########################################
+model Administrador {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  usuario     String      @unique
+  email       String      @unique
+  contraseña  String
+  rol         String      // "ADMIN" | "OPERADOR"
+  estado      Boolean     @default(true)
+  reservas    Reserva[]
+  consultas   Consulta[]
+  eventos     HabitacionEvento[]
+}
+
+// TIPO HABITACION ---------------------------------------------------------###########################################
+model TipoHabitacion {
+  id           Int          @id @default(autoincrement())
+  nombre       String
+  descripcion  String?
+  capacidad    Int
+  tarifaBase   Float
+  habitaciones Habitacion[]
+}
+
+// HABITACION --------------------------------------------------------------###########################################
+model Habitacion {
+  id                Int                 @id @default(autoincrement())
+  numero            String              @unique
+  piso              Int
+  estado            String              // Disponible | Ocupada | Mantenimiento
+  tipoHabitacionId  Int
+  tipoHabitacion    TipoHabitacion      @relation(fields: [tipoHabitacionId], references: [id])
+  reservas          ReservaHabitacion[]
+  eventos           HabitacionEvento[]
+}
+
+// RESERVA ---------------------------------------------------------------###########################################
+model Reserva {
+  id                Int                  @id @default(autoincrement())
+  clienteId         Int
+  administradorId   Int
+  fechaIngreso      DateTime
+  fechaEgreso       DateTime
+  adultos           Int
+  ninios            Int
+  estado            String               // Pendiente / Confirmada / Check-in / Check-out / Cancelada / Pagada
+  totalAlojamiento  Float
+  totalServicios    Float
+  totalFinal        Float
+  creadaEn          DateTime             @default(now())
+  cliente           Cliente              @relation(fields: [clienteId], references: [id])
+  administrador     Administrador        @relation(fields: [administradorId], references: [id])
+  habitaciones      ReservaHabitacion[]
+  servicios         ReservaServicio[]
+  factura           Factura?
+}
+
+// RESERVA HABITACION -----------------------------------------------------------###########################################
+model ReservaHabitacion {
+  id             Int         @id @default(autoincrement())
+  reservaId      Int
+  habitacionId   Int
+  precioUnitario Float
+  subtotal       Float
+  observaciones  String?
+  reserva        Reserva     @relation(fields: [reservaId], references: [id])
+  habitacion     Habitacion  @relation(fields: [habitacionId], references: [id])
+  @@unique([reservaId, habitacionId])
+}
+
+// SERVICIO -----------------------------------------------------------###########################################
+model Servicio {
+  id          Int               @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  precioBase  Float
+  estado      Boolean            @default(true)
+  reservas    ReservaServicio[]
+}
+
+// RESERVA SERVICIOS ----------------------------------------------------###########################################
+model ReservaServicio {
+  id             Int        @id @default(autoincrement())
+  reservaId      Int
+  servicioId     Int
+  cantidad       Int
+  precioUnitario Float
+  subtotal       Float
+  fecha          DateTime   @default(now())
+  reserva        Reserva    @relation(fields: [reservaId], references: [id])
+  servicio       Servicio   @relation(fields: [servicioId], references: [id])
+}
+
+
+// FACTURA -----------------------------------------------------------###########################################
+model Factura {
+  id            Int          @id @default(autoincrement())
+  reservaId     Int          @unique
+  metodoPagoId  Int
+  numeroFactura String       @unique
+  fechaEmision  DateTime     @default(now())
+  subtotal      Float
+  impuestos     Float
+  total         Float
+  estado        String        // Emitida / Pagada / Anulada
+  reserva       Reserva       @relation(fields: [reservaId], references: [id])
+  metodoPago    MetodoPago    @relation(fields: [metodoPagoId], references: [id])
+}
+
+// METODO PAGO -----------------------------------------------------------###########################################
+model MetodoPago {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  notas     String?
+  facturas  Factura[]
+}
+
+// CONSULTA  (OPCIONAL, DE MOMENTO) ---------------------------------------###########################################
+model Consulta {
+  id            Int            @id @default(autoincrement())
+  nombre        String
+  email         String
+  asunto        String
+  mensaje       String
+  estado        String          @default("Pendiente")
+  creadaEn      DateTime        @default(now())
+  respondidaEn  DateTime?
+  respuesta     String?
+  operadorId    Int?
+  operador      Administrador?  @relation(fields: [operadorId], references: [id])
+}
+
+// HABITACION EVENTO (OPCIONAL, DE MOMENTO) ----------------------------###########################################
+model HabitacionEvento {
+  id           Int           @id @default(autoincrement())
+  habitacionId Int
+  adminId      Int
+  tipo         String        // Abrir / Cerrar / Mantenimiento
+  detalle      String?
+  fecha        DateTime      @default(now())
+  habitacion   Habitacion    @relation(fields: [habitacionId], references: [id])
+  administrador Administrador @relation(fields: [adminId], references: [id])
+}
