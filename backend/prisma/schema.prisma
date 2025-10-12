@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// ───────────────────────────────────────────────────────────────
+// CONFIGURACIÓN GENERAL
+// ───────────────────────────────────────────────────────────────
 
 generator client {
   provider = "prisma-client-js"
@@ -14,160 +12,284 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// CLIENTE -----------------------------------------------------------------###########################################
-model Cliente {
+// ───────────────────────────────────────────────────────────────
+// ENUMS PARA ESTADOS Y TIPOS (Mejora de integridad de datos)
+// ───────────────────────────────────────────────────────────────
+
+enum EstadoHabitacion {
+  Disponible
+  Ocupada
+  Mantenimiento
+}
+
+enum EstadoReserva {
+  Pendiente
+  Confirmada
+  CheckIn
+  CheckOut
+  Cancelada
+}
+
+enum EstadoFactura {
+  Emitida
+  Pagada
+  Anulada
+}
+
+enum EstadoConsulta {
+  Pendiente
+  Respondida
+}
+
+enum TipoEventoHabitacion {
+  Apertura
+  Cierre
+  Mantenimiento
+}
+
+
+// ───────────────────────────────────────────────────────────────
+// USUARIOS Y ROLES (Ajustado para Supabase Auth y tu BD en Neon)
+// ───────────────────────────────────────────────────────────────
+
+model Usuario {
+  // AJUSTE: id es String (UUID) para coincidir con Supabase Auth.
+  // Es la clave primaria en tu BD de Neon pero no tiene una restricción de clave foránea a Supabase.
+  id        String   @id
+  nombre    String
+  apellido  String?
+  telefono  String?
+  direccion String?
+  provincia String?
+  estado    Boolean  @default(true)
+  fechaAlta DateTime @default(now())
+  rolId     Int
+  rol       Rol      @relation(fields: [rolId], references: [id])
+
+  // Relaciones
+  reservasCliente        Reserva[]          @relation("ReservasCliente")
+  reservasAdministrador  Reserva[]          @relation("ReservasAdministrador")
+  consultasRespondidas   Consulta[]
+  eventosHabitacion      HabitacionEvento[]
+
+  @@map("usuarios")
+}
+
+model Rol {
   id          Int       @id @default(autoincrement())
-  nombre      String
-  apellido    String
-  dni         String    @unique
-  email       String    @unique
-  telefono    String?
-  direccion   String?
-  estado      Boolean   @default(true)
-  fechaAlta   DateTime  @default(now())
-  reservas    Reserva[]
+  nombre      String    @unique // "cliente" | "operador" | "administrador"
+  descripcion String?
+  usuarios    Usuario[]
+
+  @@map("roles")
 }
 
-// ADMINISTRADOR -----------------------------------------------------------###########################################
-model Administrador {
-  id          Int         @id @default(autoincrement())
-  nombre      String
-  usuario     String      @unique
-  email       String      @unique
-  contraseña  String
-  rol         String      // "ADMIN" | "OPERADOR"
-  estado      Boolean     @default(true)
-  reservas    Reserva[]
-  consultas   Consulta[]
-  eventos     HabitacionEvento[]
-}
+// ───────────────────────────────────────────────────────────────
+// TIPO HABITACION Y SUS DETALLES
+// ───────────────────────────────────────────────────────────────
 
-// TIPO HABITACION ---------------------------------------------------------###########################################
 model TipoHabitacion {
-  id           Int          @id @default(autoincrement())
+  id           Int                        @id @default(autoincrement())
   nombre       String
   descripcion  String?
   capacidad    Int
-  tarifaBase   Float
+  // AJUSTE: Usar Decimal para precios.
+  tarifaBase   Decimal
+  superficie   Float?
+  vista        String?
+  politicas    String?
   habitaciones Habitacion[]
+  amenidades   TipoHabitacionAmenidad[]
+  imagenes     ImagenHabitacion[]
+
+  @@map("tipos_habitacion")
 }
 
-// HABITACION --------------------------------------------------------------###########################################
+model Amenidad {
+  id              Int                        @id @default(autoincrement())
+  nombre          String
+  descripcion     String?
+  icono           String?
+  tiposHabitacion TipoHabitacionAmenidad[]
+
+  @@map("amenidades")
+}
+
+model TipoHabitacionAmenidad {
+  tipoHabitacionId Int
+  amenidadId       Int
+  tipoHabitacion   TipoHabitacion @relation(fields: [tipoHabitacionId], references: [id])
+  amenidad         Amenidad       @relation(fields: [amenidadId], references: [id])
+
+  @@id([tipoHabitacionId, amenidadId])
+  @@map("tipos_habitacion_amenidades")
+}
+
+model ImagenHabitacion {
+  id               Int            @id @default(autoincrement())
+  tipoHabitacionId Int
+  url              String
+  descripcion      String?
+  tipoHabitacion   TipoHabitacion @relation(fields: [tipoHabitacionId], references: [id])
+
+  @@map("imagenes_habitacion")
+}
+
+// ───────────────────────────────────────────────────────────────
+// HABITACIÓN (Instancia física de un TipoHabitacion)
+// ───────────────────────────────────────────────────────────────
+
 model Habitacion {
-  id                Int                 @id @default(autoincrement())
-  numero            String              @unique
-  piso              Int
-  estado            String              // Disponible | Ocupada | Mantenimiento
-  tipoHabitacionId  Int
-  tipoHabitacion    TipoHabitacion      @relation(fields: [tipoHabitacionId], references: [id])
-  reservas          ReservaHabitacion[]
-  eventos           HabitacionEvento[]
+  id               Int                 @id @default(autoincrement())
+  numero           String              @unique
+  piso             Int
+  // AJUSTE: Usar Enum para estandarizar los estados.
+  estado           EstadoHabitacion
+  tipoHabitacionId Int
+  tipoHabitacion   TipoHabitacion      @relation(fields: [tipoHabitacionId], references: [id])
+  reservas         ReservaHabitacion[]
+  eventos          HabitacionEvento[]
+
+  @@map("habitaciones")
 }
 
-// RESERVA ---------------------------------------------------------------###########################################
+// ───────────────────────────────────────────────────────────────
+// RESERVA Y SUS DETALLES
+// ───────────────────────────────────────────────────────────────
+
 model Reserva {
-  id                Int                  @id @default(autoincrement())
-  clienteId         Int
-  administradorId   Int
-  fechaIngreso      DateTime
-  fechaEgreso       DateTime
-  adultos           Int
-  ninios            Int
-  estado            String               // Pendiente / Confirmada / Check-in / Check-out / Cancelada / Pagada
-  totalAlojamiento  Float
-  totalServicios    Float
-  totalFinal        Float
-  creadaEn          DateTime             @default(now())
-  cliente           Cliente              @relation(fields: [clienteId], references: [id])
-  administrador     Administrador        @relation(fields: [administradorId], references: [id])
-  habitaciones      ReservaHabitacion[]
-  servicios         ReservaServicio[]
-  factura           Factura?
+  id              Int                 @id @default(autoincrement())
+  // AJUSTE: clienteId y administradorId son String (UUID).
+  clienteId       String
+  administradorId String?
+  fechaIngreso    DateTime
+  fechaEgreso     DateTime
+  adultos         Int
+  ninios          Int               @default(0)
+  // AJUSTE: Usar Enum para estandarizar los estados.
+  estado          EstadoReserva
+  // AJUSTE: Usar Decimal para precios.
+  totalAlojamiento Decimal
+  totalServicios   Decimal
+  totalFinal       Decimal
+  creadaEn         DateTime           @default(now())
+
+  cliente         Usuario             @relation("ReservasCliente", fields: [clienteId], references: [id])
+  administrador   Usuario?            @relation("ReservasAdministrador", fields: [administradorId], references: [id])
+  habitaciones    ReservaHabitacion[]
+  servicios       ReservaServicio[]
+  factura         Factura?
+
+  @@map("reservas")
 }
 
-// RESERVA HABITACION -----------------------------------------------------------###########################################
 model ReservaHabitacion {
-  id             Int         @id @default(autoincrement())
-  reservaId      Int
-  habitacionId   Int
-  precioUnitario Float
-  subtotal       Float
-  observaciones  String?
-  reserva        Reserva     @relation(fields: [reservaId], references: [id])
-  habitacion     Habitacion  @relation(fields: [habitacionId], references: [id])
+  id            Int        @id @default(autoincrement())
+  reservaId     Int
+  habitacionId  Int
+  // AJUSTE: Usar Decimal para precios.
+  precioUnitario Decimal
+  subtotal      Decimal
+  observaciones String?
+  reserva       Reserva    @relation(fields: [reservaId], references: [id])
+  habitacion    Habitacion @relation(fields: [habitacionId], references: [id])
+
   @@unique([reservaId, habitacionId])
+  @@map("reservas_habitacion")
 }
 
-// SERVICIO -----------------------------------------------------------###########################################
 model Servicio {
   id          Int               @id @default(autoincrement())
   nombre      String
   descripcion String?
-  precioBase  Float
-  estado      Boolean            @default(true)
+  // AJUSTE: Usar Decimal para precios.
+  precioBase  Decimal
+  estado      Boolean           @default(true)
   reservas    ReservaServicio[]
+
+  @@map("servicios")
 }
 
-// RESERVA SERVICIOS ----------------------------------------------------###########################################
 model ReservaServicio {
-  id             Int        @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   reservaId      Int
   servicioId     Int
   cantidad       Int
-  precioUnitario Float
-  subtotal       Float
-  fecha          DateTime   @default(now())
-  reserva        Reserva    @relation(fields: [reservaId], references: [id])
-  servicio       Servicio   @relation(fields: [servicioId], references: [id])
+  // AJUSTE: Usar Decimal para precios.
+  precioUnitario Decimal
+  subtotal       Decimal
+  fecha          DateTime @default(now())
+  reserva        Reserva  @relation(fields: [reservaId], references: [id])
+  servicio       Servicio @relation(fields: [servicioId], references: [id])
+
+  @@map("reservas_servicios")
 }
 
 
-// FACTURA -----------------------------------------------------------###########################################
+// ───────────────────────────────────────────────────────────────
+// FACTURACIÓN Y PAGOS
+// ───────────────────────────────────────────────────────────────
+
 model Factura {
   id            Int          @id @default(autoincrement())
   reservaId     Int          @unique
   metodoPagoId  Int
   numeroFactura String       @unique
   fechaEmision  DateTime     @default(now())
-  subtotal      Float
-  impuestos     Float
-  total         Float
-  estado        String        // Emitida / Pagada / Anulada
-  reserva       Reserva       @relation(fields: [reservaId], references: [id])
-  metodoPago    MetodoPago    @relation(fields: [metodoPagoId], references: [id])
+  // AJUSTE: Usar Decimal para precios.
+  subtotal      Decimal
+  impuestos     Decimal
+  total         Decimal
+  // AJUSTE: Usar Enum para estandarizar los estados.
+  estado        EstadoFactura
+  reserva       Reserva      @relation(fields: [reservaId], references: [id])
+  metodoPago    MetodoPago   @relation(fields: [metodoPagoId], references: [id])
+
+  @@map("facturas")
 }
 
-// METODO PAGO -----------------------------------------------------------###########################################
 model MetodoPago {
-  id        Int        @id @default(autoincrement())
-  nombre    String
-  notas     String?
-  facturas  Factura[]
+  id       Int       @id @default(autoincrement())
+  nombre   String
+  notas    String?
+  facturas Factura[]
+
+  @@map("metodos_pago")
 }
 
-// CONSULTA  (OPCIONAL, DE MOMENTO) ---------------------------------------###########################################
+// ───────────────────────────────────────────────────────────────
+// CONSULTAS Y EVENTOS DE AUDITORÍA
+// ───────────────────────────────────────────────────────────────
+
 model Consulta {
   id            Int            @id @default(autoincrement())
   nombre        String
   email         String
   asunto        String
   mensaje       String
-  estado        String          @default("Pendiente")
-  creadaEn      DateTime        @default(now())
+  // AJUSTE: Usar Enum para estandarizar los estados.
+  estado        EstadoConsulta @default(Pendiente)
+  creadaEn      DateTime       @default(now())
   respondidaEn  DateTime?
   respuesta     String?
-  operadorId    Int?
-  operador      Administrador?  @relation(fields: [operadorId], references: [id])
+  // AJUSTE: operadorId es String (UUID).
+  operadorId    String?
+  operador      Usuario?       @relation(fields: [operadorId], references: [id])
+
+  @@map("consultas")
 }
 
-// HABITACION EVENTO (OPCIONAL, DE MOMENTO) ----------------------------###########################################
 model HabitacionEvento {
-  id           Int           @id @default(autoincrement())
+  id           Int                 @id @default(autoincrement())
   habitacionId Int
-  adminId      Int
-  tipo         String        // Abrir / Cerrar / Mantenimiento
+  // AJUSTE: adminId es String (UUID).
+  adminId      String
+  // AJUSTE: Usar Enum para estandarizar los tipos.
+  tipo         TipoEventoHabitacion
   detalle      String?
-  fecha        DateTime      @default(now())
-  habitacion   Habitacion    @relation(fields: [habitacionId], references: [id])
-  administrador Administrador @relation(fields: [adminId], references: [id])
+  fecha        DateTime            @default(now())
+  habitacion   Habitacion          @relation(fields: [habitacionId], references: [id])
+  administrador Usuario             @relation(fields: [adminId], references: [id])
+
+  @@map("habitaciones_eventos")
 }
