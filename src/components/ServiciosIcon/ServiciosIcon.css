@@ -1,0 +1,95 @@
+.servicios-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  margin: 50px auto; 
+  text-align: center;
+  gap: 20px; /* Espacio entre los pares de servicios */
+  max-width: 1200px;
+}
+
+.service-icon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* --- CONTENEDOR CIRCULAR DEL ÍCONO/IMAGEN --- */
+.service-icon-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+.service-icon-container:hover{
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
+}
+
+
+.icon-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* La opacidad ya no es necesaria, pero mantenemos el wrapper */
+}
+
+.service-icon-image {
+  width: 60%; 
+  height: 60%;
+  object-fit: contain;
+}
+/* --- NOMBRE DEL SERVICIO (Debajo del Círculo) --- */
+.service-icon-name {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #333;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.service-icon-description-permanent {
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.4;
+    max-width: 80%; 
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .servicios-icon-grid {
+    grid-template-columns: repeat(2, 1fr); 
+    max-width: 600px;
+  }
+  .service-icon-container {
+    width: 120px;
+    height: 120px;
+  }
+  .service-icon-name {
+    font-size: 1em;
+  }
+  .service-icon-description-permanent {
+      font-size: 0.85em;
+  }
+}
+
+@media (max-width: 500px) {
+  .servicios-icon-grid {
+    grid-template-columns: 1fr; 
+    max-width: 300px;
+  }
+}

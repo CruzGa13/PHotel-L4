@@ -1,0 +1,239 @@
+.habitaciones-page {
+  min-height: calc(100vh - 70px);
+  background-color: #ffffff; 
+  padding: 20px; 
+  padding-top: 50px; 
+  font-family: var(--font-sans, system-ui, sans-serif);
+  animation: slideInLeft 1s ease-out forwards;
+}
+
+.habitaciones-container {
+  max-width: 1200px;
+  margin-bottom: 10px;
+  padding: 40px; 
+}
+.page-header {
+  text-align: left;
+  margin-bottom: 3rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(to bottom, #055d15 40%, #41ffb9 150%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.page-subtitle {
+  font-size: 1.125rem;
+  color: #4b5563;
+  text-align: left;
+}
+
+.filter-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.filter-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 1.5rem;
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151; 
+  margin-bottom: 0.5rem;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db; 
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%22292.4%22 height%3D%22292.4%22 viewBox%3D%220 0 292.4 292.4%22%3E%3Cpath fill%3D%22%236b7280%22 d%3D%22M287 69.4a17.6 17.6 0 00-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4-3.6 3.6-5.4 7.9-5.4 12.9 0 5 1.8 9.3 5.4 12.9l128 128c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4l128-128c3.6-3.5 5.3-7.8 5.3-12.9 0-5.1-1.7-9.4-5.3-13z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.8em;
+}
+
+.filter-group select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(5, 93, 21, 0.2);
+  border-color: #055d15;
+}
+
+.btn-clear-filters {
+  background-color: #4b5563; 
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-clear-filters:hover {
+  background-color: #1f2937; 
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.room-card {
+  background-color: white;
+  border-radius: 1.5rem; 
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.room-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.image-carousel-container {
+  position: relative;
+  width: 100%;
+  padding-top: 66.66%;
+}
+
+.room-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.7s ease;
+}
+.dot.active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+.room-card-content {
+  padding: 1.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.room-card-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.room-card-header p {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.room-card-bottom-content {
+  margin-top: auto; 
+  padding-top: 1rem;
+}
+
+.room-card-details {
+  margin-bottom: 1rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.btn-reservar {
+  background-color: #0c3f32;
+  color: white;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-reservar:hover {
+  background-color: #274941;
+  transform: scale(1.03);
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.no-results h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.no-results p {
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-5%); 
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
