@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap');
+
+.carousel-section {
+  padding: 80px 20px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+}
+
+.carousel-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #a8e0b0;
+  margin-bottom: 60px;
+}
+
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s ease;
+  gap: 40px;
+}
+
+.carousel-slide {
+  width: 320px;
+  height: 220px;
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  opacity: 0.4;
+  transform: scale(0.9);
+  transition: all 0.5s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.carousel-content {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.60);
+  border-radius: 20px;
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* centra el texto en el medio */
+}
+
+
+.carousel-content h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.carousel-content p {
+  margin: 5px 0 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* Flechas */
+.arrow {
+  background: linear-gradient(135deg, #7ed957, #2e8b57);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow:hover {
+  transform: scale(1.1);
+}
+
+.arrow.left {
+  margin-right: 20px;
+}
+
+.arrow.right {
+  margin-left: 20px;
+}
