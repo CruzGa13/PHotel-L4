@@ -107,7 +107,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
+  justify-items: center; /* Centra las tarjetas cuando hay pocas */
 }
+
+/* CORRECCIÓN 3: Agregado comentario */
 
 .room-card {
   background-color: white;
@@ -117,6 +120,8 @@
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
+  width: 100%; /* Usa todo el ancho disponible */
+  max-width: 420px; /* Pero nunca más de 420px */
 }
 
 .room-card:hover {
@@ -139,27 +144,8 @@
   object-fit: cover;
 }
 
-.carousel-dots {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  z-index: 10;
-}
-.dot {
-  width: 10px;
-  height: 10px;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.7s ease;
-}
-.dot.active {
-  background-color: white;
-  transform: scale(1.2);
-}
+/* CORRECCIÓN 2: Estilos de carrusel eliminados - Ya no son necesarios porque solo hay 1 imagen */
+/* .carousel-dots, .dot, .dot.active - ELIMINADOS */
 
 .room-card-content {
   padding: 1.5rem;

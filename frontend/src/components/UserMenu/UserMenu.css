@@ -101,3 +101,183 @@
   gap: 12px;
   padding-bottom: 8px;
 }
+
+/* ---- Botón Ingresá con estilo consistente al menu-item ---- */
+.login-button {
+  /* layout */
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 16px;
+
+  /* tipografía */
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+
+  /* forma y base */
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+
+  /* animación (en línea con .menu-item:hover) */
+  transition: transform .25s ease, box-shadow .25s ease, color .25s ease, background .25s ease;
+}
+
+.login-button .login-icon { /* ícono de usuario */
+  font-size: 1rem;
+  opacity: .95;
+}
+
+/* Hover: gradiente verde + desplazamiento como los items del menú */
+.login-button:hover,
+.login-button:focus-visible {
+  background: linear-gradient(135deg, #15361b, #488c4c);
+  color: #ffffff;
+  transform: translateX(8px);
+  box-shadow: 0 4px 15px rgba(21, 54, 27, 0.25);
+  outline: none;
+}
+
+/* Active: leve retroceso */
+.login-button:active {
+  transform: translateX(6px);
+}
+
+/* Accesibilidad */
+.login-button:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}
+
+/* Si el botón está dentro del footer del sidebar */
+.sidebar-footer .login-button {
+  margin-top: 8px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .login-button { transition: none; }
+}
+
+/* ===== Estilos para Modal de Autenticación (marrón del footer) ===== */
+
+:root {
+  --brand-brown: #2c1e16;
+}
+
+/* Botón principal con marrón */
+.btn-brand {
+  background: var(--brand-brown);
+  color: #fff;
+  transition: filter 0.2s, box-shadow 0.2s;
+}
+
+.btn-brand:hover,
+.btn-brand:focus-visible {
+  filter: brightness(0.92);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* Link con hover marrón */
+.link-brand {
+  transition: color 0.2s;
+}
+
+.link-brand:hover {
+  color: var(--brand-brown);
+}
+
+/* Input con focus marrón */
+.input-brand:focus,
+.input-brand:focus-visible {
+  border-color: var(--brand-brown);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-brown) 35%, transparent);
+  outline: none;
+}
+
+/* Contenedor para input con botón ojo */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Botón ojo dentro del input */
+.eye-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.eye-btn:hover,
+.eye-btn:focus-visible {
+  color: var(--brand-brown);
+  outline: none;
+}
+
+/* Ocultar ojo nativo de Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Tarjeta de usuario en sidebar */
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.user-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.user-lines {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.user-card .chevron {
+  margin-left: auto;
+  color: #6b7280;
+  transition: transform 0.2s;
+}
+
+.user-card .chevron.open {
+  transform: rotate(180deg);
+}

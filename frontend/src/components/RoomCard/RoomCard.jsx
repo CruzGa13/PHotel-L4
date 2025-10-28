@@ -1,32 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
+/**
+ * CORRECCIÓN 2: Eliminada lógica de carrusel (useState, handleImageNav)
+ * Ahora muestra solo 1 imagen sin indicadores porque la API solo devuelve 1 imagen
+ * 
+ * CORRECCIÓN NAVEGACIÓN: Agregado useNavigate para navegar al detalle
+ */
 export function RoomCard({ habitacion }) {
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const handleImageNav = (index) => {
-    setActiveImageIndex(index);
+  const navigate = useNavigate();
+
+  // 🔹 CORRECCIÓN: Handler para navegar al detalle de la habitación
+  const handleVerDetalle = () => {
+    console.log('🔍 Navegando a detalle de habitación:', habitacion._id);
+    navigate(`/habitaciones/${habitacion._id}`);
   };
+
   return (
     <div className="room-card">
+      {/* CORRECCIÓN 2: Contenedor simplificado - solo 1 imagen, sin dots */}
       <div className="image-carousel-container">
         <img
           src={habitacion.image1}
-          alt={`${habitacion.name} - Imagen 1`}
-          className={`room-card-image ${activeImageIndex === 0 ? 'active-image' : ''}`}
+          alt={habitacion.name}
+          className="room-card-image"
         />
-        <img
-          src={habitacion.image2}
-          alt={`${habitacion.name} - Imagen 2`}
-          className={`room-card-image ${activeImageIndex === 1 ? 'active-image' : ''}`}
-        />
-        <div className="carousel-dots">
-          {[0, 1].map(index => (
-            <span
-              key={index}
-              className={`dot ${activeImageIndex === index ? 'active' : ''}`}
-              onClick={() => handleImageNav(index)}
-            ></span>
-          ))}
-        </div>
       </div>
       <div className="room-card-content">
         <div className="room-card-header">
@@ -38,7 +36,10 @@ export function RoomCard({ habitacion }) {
             <span>Huéspedes: {habitacion.huespedes}</span>
           </div>
           <div className="room-card-footer">
-            <button className="btn-reservar">Reservar</button>
+            {/* 🔹 CORRECCIÓN: Botón ahora navega al detalle */}
+            <button className="btn-reservar" onClick={handleVerDetalle}>
+              Ver Detalles
+            </button>
           </div>
         </div>
       </div>
