@@ -1,0 +1,46 @@
+
+/* Personalización leve para cancelación */
+.success-header {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 16px 16px 0 0;
+  text-align: left;
+}
+
+.success-icon {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.modal-header h3 {
+  color: #111827;
+}
+
+.modal-body p {
+  margin-bottom: 10px;
+}
+
+.modal-footer .btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.modal-footer .btn-danger:hover {
+  background: #b91c1c;
+}
+
+.modal-overlay {
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.closing {
+  opacity: 0;
+}
+
+.modal-content {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.modal-content.closing {
+  transform: scale(0.94);
+  opacity: 0;
+}

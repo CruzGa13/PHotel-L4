@@ -1,0 +1,80 @@
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.container-main {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 40px 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #6b7280;
+  font-size: 14px;
+  margin: 8px 0 12px;
+}
+
+.breadcrumb .pink {
+  color: var(--primary-pink);
+  font-weight: 700;
+}
+
+.breadcrumb .sep {
+  opacity: 0.5;
+}
+
+.head-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.head-top h2 {
+  margin: 0 0 6px;
+  font-size: 32px;
+}
+
+.muted {
+  color: #6d6d7a;
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #0c3f32, #1c6758);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Animaciones */
+.fade-in {
+  animation: fadeInUp 0.6s ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
