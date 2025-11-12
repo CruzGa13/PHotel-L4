@@ -49,8 +49,8 @@ import cuadrupleTwin_deluxe_2 from "./deluxe/cuadrupleTwin/cuadrupleTwin_deluxe_
 import individual_ejecutivo_1 from "./ejecutivo/individual/individual_ejecutivo_1.png";
 import individual_ejecutivo_2 from "./ejecutivo/individual/individual_ejecutivo_2.png";
 // Doble Queen
-import dobleQueen_ejecutivo_1 from "./ejecutivo/DobleQueen/dobleQueen_ejecutivo_1.png";
-import dobleQueen_ejecutivo_2 from "./ejecutivo/DobleQueen/dobleQueen_ejecutivo_2.png";
+import dobleQueen_ejecutivo_1 from "./ejecutivo/dobleQueen/dobleQueen_ejecutivo_1.png";
+import dobleQueen_ejecutivo_2 from "./ejecutivo/dobleQueen/dobleQueen_ejecutivo_2.png";
 
 // --- Importaciones de Imágenes: Categoría Suite ---
 // Doble Queen
