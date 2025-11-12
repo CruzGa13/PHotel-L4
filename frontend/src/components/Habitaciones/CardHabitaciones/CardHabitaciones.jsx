@@ -1,7 +1,7 @@
 import './CardHabitaciones.css'
-import imgHabitacionActiva from '/src/assets/habitaciones/card_habitacion_activa.png'
-import imgHabitacionInactiva from '/src/assets/habitaciones/card_habitacion_inactiva.png'
-import imgHabitacionTotal from '/src/assets/habitaciones/card_habitacion_total.png'
+import imgHabitacionActiva from '../../../assets/habitaciones/card_habitacion_activa.png'
+import imgHabitacionInactiva from '../../../assets/habitaciones/card_habitacion_inactiva.png'
+import imgHabitacionTotal from '../../../assets/habitaciones/card_habitacion_total.png'
 
 export default function CardHabitaciones({ totals, loading = false }) {
   const {

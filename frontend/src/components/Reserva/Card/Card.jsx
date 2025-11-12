@@ -1,8 +1,8 @@
 import './Card.css'
-import imgReservas from '/src/assets/reserva/card_total_reserva.png'
-import imgCheckIn from '/src/assets/reserva/card_check_in.png'
-import imgCheckOut from '/src/assets/reserva/card_check_out.png'
-import imgTotal from '/src/assets/reserva/card_total.png'
+import imgReservas from '../../../assets/reserva/card_total_reserva.png'
+import imgCheckIn from '../../../assets/reserva/card_check_in.png'
+import imgCheckOut from '../../../assets/reserva/card_check_out.png'
+import imgTotal from '../../../assets/reserva/card_total.png'
 
 export default function Card({ totals }) {
   const {
