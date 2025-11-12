@@ -1,5 +1,5 @@
 import React from 'react';
-import './footer.css';
+import './Footer.css';
 // Importamos los íconos desde la librería react-icons
 import { FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
