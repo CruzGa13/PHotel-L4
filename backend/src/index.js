@@ -25,12 +25,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // TODO: centralizar allowlist si se necesita en múltiples archivos
-// ⚠️ IMPORTANTE: Agregar el dominio de producción del frontend antes de hacer deploy
 const ALLOWLIST = new Set([
   'http://localhost:5173',
-  // ⚠️ AGREGAR DESPUÉS DEL DEPLOY DE FIREBASE:
-  // 'https://photel-XXXXX.web.app',
-  // 'https://photel-XXXXX.firebaseapp.com',
+  // Frontend en Vercel
+  'https://p-hotel-l4-qc2k-2s03hh7bc-ainpedrocruz2000-1713s-projects.vercel.app',
 ]);
 
 // CORS con allowlist: permite orígenes válidos + herramientas sin Origin (curl/Postman)
