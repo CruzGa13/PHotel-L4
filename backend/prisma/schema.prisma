@@ -56,7 +56,7 @@ enum Genero {
 // USUARIOS Y ROLES
 // ------------------------------------
 model Usuario {
-  id                    String             @id
+  id                    String              @id
   nombre                String
   apellido              String?
   fechaNacimiento       DateTime?
@@ -64,14 +64,17 @@ model Usuario {
   telefono              String?
   direccion             String?
   provincia             String?
-  estado                Boolean            @default(true)
-  fechaAlta             DateTime           @default(now())
+  estado                Boolean             @default(true)
+  fechaAlta             DateTime            @default(now())
   rolId                 Int
-  rol                   Rol                @relation(fields: [rolId], references: [id])
+  rol                   Rol                 @relation(fields: [rolId], references: [id])
   consultasRespondidas  Consulta[]
   eventosHabitacion     HabitacionEvento[]
-  reservasAdministrador Reserva[]          @relation("ReservasAdministrador")
-  reservasCliente       Reserva[]          @relation("ReservasCliente")
+  reservasAdministrador Reserva[]           @relation("ReservasAdministrador")
+  reservasCliente       Reserva[]           @relation("ReservasCliente")
+  bloqueosCreados       HabitacionBloqueo[] @relation("UsuarioCreadorBloqueos")
+  emailsAsignados       Email[]
+  emailsRespondidos     EmailRespuesta[]
 
   @@map("usuarios")
 }
@@ -101,29 +104,29 @@ model Categoria {
 
 // Define la capacidad y tipo de camas (Doble Queen, Triple Twin, etc.)
 model Ocupacion {
-  id                 Int              @id @default(autoincrement())
-  nombre             String           @unique
-  capacidad          Int
-  descripcionCamas   String?
-  tiposHabitacion    TipoHabitacion[]
+  id               Int              @id @default(autoincrement())
+  nombre           String           @unique
+  capacidad        Int
+  descripcionCamas String?
+  tiposHabitacion  TipoHabitacion[]
 
   @@map("ocupaciones")
 }
 
 // El "Producto" que se vende: une Categoria y Ocupacion con un precio y nombre de marketing
 model TipoHabitacion {
-  id           Int              @id @default(autoincrement())
-  nombre       String           // Nombre de Marketing: "Estancia Trío"
-  descripcion  String?          // Descripción de Marketing
+  id           Int                      @id @default(autoincrement())
+  nombre       String // Nombre de Marketing: "Estancia Trío"
+  descripcion  String? // Descripción de Marketing
   categoriaId  Int
-  categoria    Categoria        @relation(fields: [categoriaId], references: [id])
+  categoria    Categoria                @relation(fields: [categoriaId], references: [id])
   ocupacionId  Int
-  ocupacion    Ocupacion        @relation(fields: [ocupacionId], references: [id])
+  ocupacion    Ocupacion                @relation(fields: [ocupacionId], references: [id])
   tarifaBase   Decimal
   superficie   Float?
   vista        String?
   politicas    String?
-  habitaciones Habitacion[]     // Las habitaciones físicas de este tipo
+  habitaciones Habitacion[] // Las habitaciones físicas de este tipo
   imagenes     ImagenHabitacion[] // Las fotos de este tipo
   amenidades   TipoHabitacionAmenidad[] // Las comodidades de este tipo
 
@@ -172,8 +175,9 @@ model Habitacion {
   estado           EstadoHabitacion
   tipoHabitacionId Int
   tipoHabitacion   TipoHabitacion      @relation(fields: [tipoHabitacionId], references: [id])
-  eventos          HabitacionEvento[]  // Opcional para auditoría
+  eventos          HabitacionEvento[] // Opcional para auditoría
   reservas         ReservaHabitacion[]
+  bloqueos         HabitacionBloqueo[]
 
   @@map("habitaciones")
 }
@@ -197,22 +201,24 @@ model Reserva {
   totalFinal       Decimal
   creadaEn         DateTime            @default(now())
   factura          Factura?
+  contactoEmail    String?
   habitaciones     ReservaHabitacion[]
   servicios        ReservaServicio[]
+  movimientos ReservaMovimiento[]
 
   @@map("reservas")
 }
 
 // Tabla de unión: Qué habitaciones específicas se asignaron a una reserva
 model ReservaHabitacion {
-  id            Int        @id @default(autoincrement())
-  reservaId     Int
-  reserva       Reserva    @relation(fields: [reservaId], references: [id])
-  habitacionId  Int
-  habitacion    Habitacion @relation(fields: [habitacionId], references: [id])
+  id             Int        @id @default(autoincrement())
+  reservaId      Int
+  reserva        Reserva    @relation(fields: [reservaId], references: [id])
+  habitacionId   Int
+  habitacion     Habitacion @relation(fields: [habitacionId], references: [id])
   precioUnitario Decimal // Precio al momento de reservar
-  subtotal      Decimal
-  observaciones String?
+  subtotal       Decimal
+  observaciones  String?
 
   @@unique([reservaId, habitacionId])
   @@map("reservas_habitacion")
@@ -285,6 +291,7 @@ model Consulta {
   respuesta    String?
   operadorId   String?
   operador     Usuario?       @relation(fields: [operadorId], references: [id])
+  emailVinculado Email?
 
   @@map("consultas")
 }
@@ -294,11 +301,191 @@ model HabitacionEvento {
   id            Int                  @id @default(autoincrement())
   habitacionId  Int
   habitacion    Habitacion           @relation(fields: [habitacionId], references: [id])
-  adminId       String
-  administrador Usuario              @relation(fields: [adminId], references: [id])
+  adminId       String?
+  administrador Usuario?             @relation(fields: [adminId], references: [id])
   tipo          TipoEventoHabitacion
   detalle       String?
   fecha         DateTime             @default(now())
 
   @@map("habitaciones_eventos")
+}
+
+enum TipoBloqueo {
+  Mantenimiento
+  FueraDeServicio
+  BloqueoOperativo
+}
+
+model HabitacionBloqueo {
+  id           Int        @id @default(autoincrement())
+  habitacionId Int
+  habitacion   Habitacion @relation(fields: [habitacionId], references: [id])
+
+  // Rango — sugerido: 'hasta' EXCLUSIVO
+  desde DateTime
+  hasta DateTime
+
+  motivo String?
+  tipo   TipoBloqueo @default(Mantenimiento)
+
+  creadoPorId String?
+  // 👇 nombramos la relación y usamos el lado opuesto de Usuario
+  creadoPor   Usuario? @relation("UsuarioCreadorBloqueos", fields: [creadoPorId], references: [id])
+  creadoEn    DateTime @default(now())
+
+  @@index([habitacionId, desde])
+  @@index([habitacionId, desde, hasta])
+  @@map("habitaciones_bloqueos")
+}
+
+
+model ReservaMovimiento {
+  id           Int            @id @default(autoincrement())
+
+  // relación con Reserva
+  reservaId    Int
+  reserva      Reserva        @relation(fields: [reservaId], references: [id], onDelete: Cascade)
+
+  // cambios de estado
+  estadoAnt    EstadoReserva
+  estadoNuevo  EstadoReserva
+
+  // auditoría
+  cambiadoEn   DateTime       @default(now())
+
+  // opcional: quién hizo el cambio (lo podés completar más adelante)
+  operadorId   String?
+
+  @@index([reservaId])
+  @@map("reservas_movimientos")
+}
+
+// ------------------------------------
+// SISTEMA DE EMAILS (IMAP/SMTP)
+// ------------------------------------
+
+enum EstadoEmail {
+  NoLeido
+  Leido
+  Respondido
+  Archivado
+  Spam
+}
+
+enum PrioridadEmail {
+  Alta
+  Media
+  Baja
+}
+
+enum CanalEmail {
+  Email      // Gmail via IMAP/SMTP
+  Web        // Formulario web (Consulta)
+  WhatsApp   // Futuro
+}
+
+// Email principal recibido desde Gmail
+model Email {
+  id             Int               @id @default(autoincrement())
+  
+  // IDs de Gmail para sincronización
+  messageId      String            @unique // Message-ID del header
+  gmailId        String?           @unique // ID interno de Gmail (si usas API)
+  threadId       String?           // Thread ID de Gmail para conversaciones
+  
+  // Remitente
+  deNombre       String?
+  deEmail        String
+  
+  // Destinatarios
+  paraNombres    String?
+  paraEmails     String            // Comma-separated si hay varios
+  cc             String?
+  bcc            String?
+  
+  // Contenido
+  asunto         String
+  cuerpoTexto    String?           @db.Text
+  cuerpoHtml     String?           @db.Text
+  
+  // Metadata
+  canal          CanalEmail        @default(Email)
+  prioridad      PrioridadEmail    @default(Media)
+  estado         EstadoEmail       @default(NoLeido)
+  
+  // Fechas
+  fechaRecibido  DateTime          // Del header Date
+  fechaSincronizado DateTime       @default(now())
+  fechaLeido     DateTime?
+  
+  // Relaciones
+  adjuntos       EmailAdjunto[]
+  respuestas     EmailRespuesta[]
+  
+  // Operador asignado/que responde
+  operadorId     String?
+  operador       Usuario?          @relation(fields: [operadorId], references: [id])
+  
+  // Vinculación opcional con consulta web (si se migra)
+  consultaId     Int?              @unique
+  consulta       Consulta?         @relation(fields: [consultaId], references: [id])
+  
+  // Banderas útiles
+  esSpam         Boolean           @default(false)
+  tieneAdjuntos  Boolean           @default(false)
+  
+  @@index([deEmail])
+  @@index([threadId])
+  @@index([estado, prioridad])
+  @@index([fechaRecibido])
+  @@map("emails")
+}
+
+// Adjuntos de emails
+model EmailAdjunto {
+  id          Int      @id @default(autoincrement())
+  emailId     Int
+  email       Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  
+  nombreArchivo String
+  mimeType      String
+  tamano        Int    // bytes
+  
+  // Almacenamiento (elegir uno)
+  rutaLocal     String? // Si guardás en disco
+  urlS3         String? // Si guardás en S3/cloud
+  dataBase64    String? @db.Text // Si guardás en DB (no recomendado para archivos grandes)
+  
+  creadoEn      DateTime @default(now())
+  
+  @@index([emailId])
+  @@map("emails_adjuntos")
+}
+
+// Respuestas enviadas (historial)
+model EmailRespuesta {
+  id              Int      @id @default(autoincrement())
+  emailId         Int
+  email           Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  
+  // Quién respondió (opcional)
+  operadorId      String?
+  operador        Usuario?  @relation(fields: [operadorId], references: [id])
+  
+  // Contenido de la respuesta
+  asunto          String
+  cuerpoTexto     String?  @db.Text
+  cuerpoHtml      String?  @db.Text
+  
+  // Metadata de envío
+  messageIdRespuesta String? @unique // Message-ID de la respuesta enviada
+  estadoEnvio        String   @default("Enviado") // Enviado, Error, etc.
+  errorEnvio         String?  @db.Text
+  
+  // Fechas
+  fechaEnviado    DateTime @default(now())
+  
+  @@index([emailId])
+  @@index([operadorId])
+  @@map("emails_respuestas")
 }

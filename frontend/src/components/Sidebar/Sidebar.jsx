@@ -7,11 +7,21 @@ import {
   FaCalendarCheck,
   FaEnvelope,
   FaTimes,
+  FaClipboardList,
+  FaComments,
+  FaCog,
+  FaMap,
 } from "react-icons/fa";
 import UserMenu from "../UserMenu/UserMenu";
+import { useAuth } from "../../context/AuthContext";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, activeItem }) => {
+  const { user } = useAuth();
+  
+  // Verificar si el usuario es operador (case-insensitive)
+  const isOperador = user?.rol?.nombre?.toLowerCase() === "operador";
+  
   const getMenuItemClass = (item) => {
     return `menu-item ${activeItem === item ? "active" : ""}`;
   };
@@ -39,26 +49,57 @@ const Sidebar = ({ isOpen, onClose, activeItem }) => {
 
         {/* --- Navegación --- */}
         <nav className="sidebar-nav">
-          <Link to="/inicio" className={getMenuItemClass("inicio")}>
-            <FaHome className="menu-item-icon" />
-            <span className="menu-item-text">Inicio</span>
-          </Link>
-          <Link to="/habitaciones" className={getMenuItemClass("habitaciones")}>
-            <FaBed className="menu-item-icon" />
-            <span className="menu-item-text">Habitaciones</span>
-          </Link>
-          <Link to="/servicios" className={getMenuItemClass("servicios")}>
-            <FaConciergeBell className="menu-item-icon" />
-            <span className="menu-item-text">Servicios</span>
-          </Link>
-          <Link to="/reserva" className={getMenuItemClass("reserva")}>
-            <FaCalendarCheck className="menu-item-icon" />
-            <span className="menu-item-text">Reserva</span>
-          </Link>
-          <Link to="/contacto" className={getMenuItemClass("contacto")}>
-            <FaEnvelope className="menu-item-icon" />
-            <span className="menu-item-text">Contacto</span>
-          </Link>
+          {/* Items para usuarios NO operadores (clientes) */}
+          {!isOperador && (
+            <>
+              <Link to="/inicio" className={getMenuItemClass("inicio")}>
+                <FaHome className="menu-item-icon" />
+                <span className="menu-item-text">Inicio</span>
+              </Link>
+              <Link to="/habitaciones" className={getMenuItemClass("habitaciones")}>
+                <FaBed className="menu-item-icon" />
+                <span className="menu-item-text">Habitaciones</span>
+              </Link>
+              <Link to="/servicios" className={getMenuItemClass("servicios")}>
+                <FaConciergeBell className="menu-item-icon" />
+                <span className="menu-item-text">Servicios</span>
+              </Link>
+              <Link to="/reserva" className={getMenuItemClass("reserva")}>
+                <FaCalendarCheck className="menu-item-icon" />
+                <span className="menu-item-text">Reserva</span>
+              </Link>
+              <Link to="/contacto" className={getMenuItemClass("contacto")}>
+                <FaEnvelope className="menu-item-icon" />
+                <span className="menu-item-text">Contacto</span>
+              </Link>
+            </>
+          )}
+
+          {/* Items SOLO para operadores */}
+          {isOperador && (
+            <>
+              <div className="menu-separator">
+                <span>Panel de Operador</span>
+              </div>
+
+              <Link to="/habitaciones-op" className={getMenuItemClass("habitaciones-op")}>
+                <FaCog className="menu-item-icon" />
+                <span className="menu-item-text">Gestión De Habitaciones</span>
+              </Link>
+              <Link to="/mapa-habitaciones" className={getMenuItemClass("mapa-habitaciones")}>
+                <FaMap className="menu-item-icon" />
+                <span className="menu-item-text">Mapa de Habitaciones</span>
+              </Link>
+              <Link to="/reserva-op" className={getMenuItemClass("reserva-op")}>
+                <FaClipboardList className="menu-item-icon" />
+                <span className="menu-item-text">Gestión de Reservas</span>
+              </Link>
+              <Link to="/mensajes-op" className={getMenuItemClass("mensajes-op")}>
+                <FaComments className="menu-item-icon" />
+                <span className="menu-item-text">Mensajes</span>
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* --- Footer con menú del usuario --- */}

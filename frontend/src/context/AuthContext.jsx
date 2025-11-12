@@ -6,6 +6,9 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalReason, setAuthModalReason] = useState(null);
+  const [onAuthSuccessCallback, setOnAuthSuccessCallback] = useState(null);
 
   useEffect(() => {
     // Verificar sesión al cargar
@@ -49,6 +52,12 @@ export const AuthProvider = ({ children }) => {
           if (response.ok) {
             const profile = await response.json();
             setUser(profile);
+            
+            // Ejecutar callback si existe
+            if (onAuthSuccessCallback) {
+              onAuthSuccessCallback();
+              setOnAuthSuccessCallback(null);
+            }
           }
         } catch (error) {
           console.error('Error fetching profile:', error);
@@ -69,8 +78,35 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  /**
+   * Abrir modal de autenticación con opciones
+   * @param {Object} options - Opciones del modal
+   * @param {string} options.reason - Razón de apertura ("checkout", etc.)
+   * @param {Function} options.onSuccess - Callback a ejecutar tras login exitoso
+   */
+  const openAuthModal = ({ reason, onSuccess } = {}) => {
+    setAuthModalReason(reason || null);
+    setOnAuthSuccessCallback(() => onSuccess); // Wrap in function to store function reference
+    setAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setAuthModalOpen(false);
+    setAuthModalReason(null);
+    setOnAuthSuccessCallback(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      setUser, 
+      loading, 
+      signOut,
+      authModalOpen,
+      authModalReason,
+      openAuthModal,
+      closeAuthModal
+    }}>
       {children}
     </AuthContext.Provider>
   );

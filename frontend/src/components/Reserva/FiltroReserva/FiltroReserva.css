@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+.filters {
+  padding: 22px;
+  margin-bottom: 24px;
+}
+.filters h3 {
+  margin: 0 0 16px;
+  color: var(--dark-blue);
+}
+.filters .grid {
+  font-family: Poppins,sans-serif;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.filters .grid.one {
+  grid-template-columns: 1fr;
+  font-family: Poppins,sans-serif;
+}
+.filters label {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: #374151;
+  margin: 0 0 6px;
+  font-family: Poppins,sans-serif;
+}
+.filters .actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+@media (max-width: 1024px) {
+  .filters .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .filters .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px rgba(5, 93, 21, 0.12);
+}
+
+/* Espacio vertical entre los bloques dentro de .filters */
+.filters > * + * {
+  margin-top: 16px;     /* ajusta a 20/24 si querés más aire */
+}
+
+/* (opcional) un poco de aire entre label y el input */
+.filters label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* (opcional) si usás grid acá, agrega gap entre celdas */
+.filters .grid {
+  display: grid;
+  gap: 12px 16px;       /* fila x columna */
+}
+
+/* tu grid de 1 columna */
+.filters .grid.one {
+  grid-template-columns: 1fr;
+}

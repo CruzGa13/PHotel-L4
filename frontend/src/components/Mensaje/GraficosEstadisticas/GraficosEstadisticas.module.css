@@ -1,0 +1,233 @@
+/* ===================================
+   CONTENEDOR PRINCIPAL
+   =================================== */
+
+.graficosContainer {
+  margin-top: 32px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mainTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===================================
+   GRID DE GRÁFICOS
+   =================================== */
+
+.graficosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+/* ===================================
+   CARDS DE GRÁFICOS
+   =================================== */
+
+.graficoCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.graficoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconTitle {
+  font-size: 20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+.chartWrapper {
+  height: 280px;
+  position: relative;
+}
+
+/* ===================================
+   MÉTRICA DE TIEMPO PROMEDIO
+   =================================== */
+
+.metricaCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 
+    0 4px 12px rgba(102, 126, 234, 0.3),
+    0 8px 24px rgba(118, 75, 162, 0.2);
+  color: #ffffff;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.metricaCard::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.metricaCard:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 6px 16px rgba(102, 126, 234, 0.4),
+    0 12px 32px rgba(118, 75, 162, 0.3);
+}
+
+.metricaIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: bounce 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.metricaTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+}
+
+.metricaValor {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.numero {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.unidad {
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.separador {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 4px;
+}
+
+.metricaDescripcion {
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.85;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
+@media (max-width: 1200px) {
+  .graficosGrid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .graficosGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chartWrapper {
+    height: 250px;
+  }
+  
+  .metricaCard {
+    padding: 24px;
+  }
+  
+  .numero {
+    font-size: 36px;
+  }
+  
+  .metricaIcon {
+    font-size: 40px;
+  }
+}

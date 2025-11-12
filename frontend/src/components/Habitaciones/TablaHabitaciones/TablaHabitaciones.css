@@ -1,0 +1,158 @@
+.table-wrap {
+  overflow: hidden;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.table-head {
+  padding: 16px;
+  background: linear-gradient(90deg, #1e9e6d, #34d399);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.table-head h3 {
+  color: #fff;
+  margin: 0;
+  font-weight: 600;
+}
+
+.scroll-x {
+  overflow-x: auto;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 700;
+  padding: 16px;
+  color: #002d62;
+  background: #fff; 
+  border-bottom: 1px solid #eef2f7;
+  font-size: 14px;
+}
+
+.table th.sortable {
+  transition: background 0.2s ease;
+}
+
+.table th.sortable:hover {
+  background: #f3f4f6;
+}
+
+.sort-icon {
+  font-size: 12px;
+  transition: color 0.2s ease;
+}
+
+.sort-icon.inactive {
+  color: #9ca3af;
+  opacity: 0.5;
+}
+
+.sort-icon.active {
+  color: #10b981;
+  opacity: 1;
+}
+
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef2f7;
+  vertical-align: middle;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge.contestado {
+  background: #0f931d;
+  color: #ffffff; 
+}
+
+.badge.sin-responder {
+  background: #f34545; 
+  color: #fff; 
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.actions .btn-primary {
+  background: #10b981;
+  color: #fff;
+}
+
+.actions .btn-reply {
+  background: #0f931d;
+  color: #fff;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #fff;
+  border-top: 1px solid #eef2f7;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.pagination span {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.pager {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination .btn {
+  background: #f3f4f6; 
+  color: #4b5563; 
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.pagination .btn-primary {
+  background: #10b981;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.table tbody tr:hover {
+  background: #f3f4f6;
+  transition: background 0.2s ease;
+}

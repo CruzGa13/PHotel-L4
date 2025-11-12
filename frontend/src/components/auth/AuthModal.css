@@ -1,0 +1,291 @@
+/* AuthModal.css - Estilos para el modal de autenticación con colores del proyecto */
+
+/* Variables de color del proyecto (verde esmeralda) */
+:root {
+  --brand-primary: #059669;      /* Verde esmeralda principal */
+  --brand-primary-dark: #047857; /* Verde esmeralda oscuro */
+  --brand-primary-light: #10b981; /* Verde esmeralda claro */
+  --brand-accent: #22c55e;       /* Verde brillante */
+  --brand-gradient: linear-gradient(135deg, #15361b, #488c4c);
+  --brand-gradient-hover: linear-gradient(135deg, #0f2614, #3a7a3e);
+}
+
+/* ===== BOTÓN PRINCIPAL ===== */
+.btn-brand {
+  background: var(--brand-gradient);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+}
+
+.btn-brand:hover:not(:disabled),
+.btn-brand:focus-visible {
+  background: var(--brand-gradient-hover);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-brand:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+}
+
+.btn-brand:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== INPUTS ===== */
+.input-brand {
+  transition: all 0.2s ease;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff !important;
+  color: #1f2937;
+}
+
+.input-brand::placeholder {
+  color: #9ca3af;
+}
+
+.input-brand:focus,
+.input-brand:focus-visible {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  outline: none;
+  background-color: #ffffff !important;
+}
+
+.input-brand:hover:not(:focus) {
+  border-color: #9ca3af;
+  background-color: #ffffff !important;
+}
+
+/* ===== LINKS ===== */
+.link-brand {
+  color: #6b7280;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-brand:hover,
+.link-brand:focus {
+  color: var(--brand-primary);
+  text-decoration: underline;
+}
+
+/* ===== CONTENEDOR DE PASSWORD CON BOTÓN OJO ===== */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.eye-btn:hover,
+.eye-btn:focus-visible {
+  color: var(--brand-primary);
+  background: rgba(5, 150, 105, 0.08);
+  outline: none;
+}
+
+/* ===== FOOTER VERDE DEL LOGIN ===== */
+.auth-footer {
+  background: var(--brand-gradient);
+  padding: 24px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.auth-footer-text {
+  text-align: center;
+  color: #ffffff;
+  font-size: 0.875rem;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.auth-footer .register-btn {
+  width: 100%;
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 2px solid transparent;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-footer .register-btn:hover,
+.auth-footer .register-btn:focus-visible {
+  background: #f3f4f6;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: #ffffff;
+}
+
+.auth-footer .register-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== INDICADOR DE FUERZA DE CONTRASEÑA ===== */
+.password-strength-bar {
+  height: 6px;
+  width: 100%;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.password-strength-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+.password-strength-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Colores de fuerza de contraseña con tema verde */
+.password-strength-weak {
+  color: #ef4444;
+}
+
+.password-strength-medium {
+  color: #eab308;
+}
+
+.password-strength-strong {
+  color: var(--brand-accent);
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-top: 12px;
+  text-align: center;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ===== SELECT (GÉNERO) ===== */
+select.input-brand {
+  cursor: pointer;
+  appearance: none;
+  background-color: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  color: #1f2937;
+}
+
+select.input-brand:focus {
+  background-color: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23059669' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+}
+
+select.input-brand option {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+/* ===== ANIMACIONES DE ENTRADA ===== */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .btn-brand {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  .auth-footer {
+    padding: 20px;
+  }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+  .btn-brand,
+  .link-brand,
+  .eye-btn,
+  .password-strength-fill,
+  .input-brand {
+    transition: none;
+  }
+  
+  .error-message {
+    animation: none;
+  }
+}
+
+/* ===== MODO OSCURO - DESHABILITADO (Mantener fondos blancos) ===== */
+/* Los inputs siempre tendrán fondo blanco independientemente del modo */
+
+/* Ocultar ojo nativo de Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Asegurar fondo blanco en todos los tipos de input */
+input[type="email"].input-brand,
+input[type="password"].input-brand,
+input[type="text"].input-brand,
+input[type="date"].input-brand {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Estilo especial para input de fecha */
+input[type="date"].input-brand::-webkit-calendar-picker-indicator {
+  filter: invert(0.5);
+  cursor: pointer;
+}
+
+input[type="date"].input-brand:focus::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+}

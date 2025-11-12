@@ -1,0 +1,34 @@
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(5, 93, 21, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(5, 93, 21, 0.1);
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.scrollArea {
+  max-height: 560px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 0;
+}
+
+/* Scrollbar personalizado */
+.scrollArea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: rgba(5, 93, 21, 0.05);
+  border-radius: 4px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background: rgba(5, 93, 21, 0.2);
+  border-radius: 4px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(5, 93, 21, 0.3);
+}

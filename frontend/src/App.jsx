@@ -1,17 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer/Footer";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Inicio from "./pages/inicio/inicio";
-import HabitacionesModule from "./pages/habitaciones/Habitaciones"; 
+import HabitacionesModule from "./pages/habitaciones/habitaciones"; 
 import DetalleHabitacionPage from "./pages/DetalleHabitacion/DetalleHabitacionPage";
 import ResumenReserva from "./pages/ResumenReserva";
+import ReservaConfirmada from "./pages/ReservaConfirmada";
 import Contacto from "./pages/contacto/contacto"; 
 import ServiciosModule from "./pages/servicios/servicios";
-import Breadcrumb from "./components/Breadcrumb/Breadcrumb.jsx"; 
+import MapaPage from "./features/mapa/MapaPage";
+import ReservaOp from "./pages/ReservaOp/ReservaOp";
+import HabitacionesOp from "./pages/HabitacionesOp/HabitacionesOp";
+import DetalleHabitaciones from "./pages/DetalleHabitaciones/DetalleHabitaciones";
+import MapaHabitaciones from "./pages/MapaHabitaciones/MapaHabitaciones";
+import Breadcrumb from "./components/Breadcrumb/Breadcrumb.jsx";
+import ScrollToTopOffset from "./ScrollToTopOffset";
 import { FaBars } from "react-icons/fa";
 import "./index.css";
+
+// Lazy loading para páginas de operador
+const MensajesOp = lazy(() => import("./pages/MensajesOp/MensajesOp"));
 
 const AppLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -28,6 +40,11 @@ const AppLayout = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Auto-dismiss toasts al cambiar de ruta
+  useEffect(() => {
+    toast.dismiss();
+  }, [location.pathname]);
+
   useEffect(() => {
     if (isSidebarOpen) {
       setSidebarOpen(false);
@@ -36,18 +53,32 @@ const AppLayout = () => {
     const path = location.pathname;
     if (path === "/" || path === "/inicio") {
       setActiveItem("inicio");
+    } else if (path.includes("/habitaciones-op")) {
+      setActiveItem("habitaciones-op");
     } else if (path.includes("/habitaciones")) {
       setActiveItem("habitaciones");
     } else if (path.includes("/servicios")) {
       setActiveItem("servicios");
     } else if (path.includes("/contacto")) {
       setActiveItem("contacto");
+    } else if (path.includes("/reserva-op")) {
+      setActiveItem("reserva-op");
+    } else if (path.includes("/mensajes-op")) {
+      setActiveItem("mensajes-op");
+    } else if (path.includes("/mapa-habitaciones")) {
+      setActiveItem("mapa-habitaciones");
     } else if (path.includes("/movimiento")) {
       setActiveItem("movimiento");
     }
   }, [location.pathname]);
 
   const isHomePage = location.pathname === "/" || location.pathname === "/inicio";
+  
+  // Páginas que manejan su propio breadcrumb (modo controlado)
+  const hasOwnBreadcrumb = 
+    location.pathname.startsWith('/habitaciones/') || // Detalle de habitación
+    location.pathname === '/resumen-reserva' ||      // Pre-reserva
+    location.pathname === '/reserva-confirmada';     // Confirmación
 
   return (
     <>
@@ -61,8 +92,9 @@ const AppLayout = () => {
         </button>
       )}
 
-      {/* 🔸 Breadcrumb — solo desaparece al hacer scroll */}
-      {!isSidebarOpen && !isHomePage && (
+      {/* 🔸 Breadcrumb global — solo desaparece al hacer scroll */}
+      {/* NO se muestra en páginas que tienen breadcrumb controlado */}
+      {!isSidebarOpen && !isHomePage && !hasOwnBreadcrumb && (
         <div
           className={`breadcrumb-inline-wrapper ${
             showBreadcrumb ? "" : "hidden"
@@ -83,7 +115,7 @@ const AppLayout = () => {
         position="top-center"
         reverseOrder={false}
         toastOptions={{
-          duration: 3000,
+          duration: 2500,
           style: {
             background: '#fff',
             color: '#111827',
@@ -107,6 +139,20 @@ const AppLayout = () => {
         }}
       />
 
+      {/* 🔹 ToastContainer para react-toastify (usado en cambios de estado) */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <main className="app-main-content">
         <Routes>
           <Route path="/" element={<Inicio />} />
@@ -118,8 +164,35 @@ const AppLayout = () => {
           <Route path="/habitaciones/:id" element={<DetalleHabitacionPage />} />
           {/* 🔹 Nueva ruta para resumen de reserva */}
           <Route path="/resumen-reserva" element={<ResumenReserva />} />
+          {/* 🔹 Nueva ruta para confirmación de reserva */}
+          <Route path="/reserva-confirmada" element={<ReservaConfirmada />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/servicios" element={<ServiciosModule />} />
+          <Route path="/mapa" element={<MapaPage />} />
+          <Route path="/habitaciones-op" element={<HabitacionesOp />} />
+          <Route path="/habitaciones-op/:id" element={<DetalleHabitaciones />} />
+          <Route path="/mapa-habitaciones" element={<MapaHabitaciones />} />
+          <Route path="/reserva-op" element={<ReservaOp />} />
+          {/* 🔹 Ruta para mensajes con lazy loading */}
+          <Route 
+            path="/mensajes-op" 
+            element={
+              <Suspense fallback={
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  minHeight: '400px',
+                  fontSize: '18px',
+                  color: '#6b7280'
+                }}>
+                  ⏳ Cargando...
+                </div>
+              }>
+                <MensajesOp />
+              </Suspense>
+            } 
+          />
         </Routes>
       </main>
 
@@ -131,6 +204,7 @@ const AppLayout = () => {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTopOffset />
       <AppLayout />
     </BrowserRouter>
   );

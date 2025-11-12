@@ -3,7 +3,7 @@ import { RoomCard } from "../../components/RoomCard/RoomCard";
 import { FilterSection } from "../../components/FilterSection/FilterSection";
 import "./habitaciones.css";
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export default function HabitacionesPage() {
   // Estados para datos del backend
@@ -45,15 +45,25 @@ export default function HabitacionesPage() {
           ocupacionesRes.json()
         ]);
 
+        // Validar y transformar datos
+        const tiposValidos = Array.isArray(tiposData) ? tiposData : [];
+        const categoriasValidas = Array.isArray(categoriasData) ? categoriasData : [];
+        const ocupacionesValidas = Array.isArray(ocupacionesData) ? ocupacionesData : [];
+
+        // Transformar categorías de objetos a array de strings
+        const categoriasNombres = categoriasValidas
+          .filter(cat => cat && cat.nombre)
+          .map(cat => cat.nombre);
+
         // Actualizar estados
-        setTiposHabitacion(tiposData);
-        setCategoriasFiltro(categoriasData);
-        setOcupacionesFiltro(ocupacionesData);
+        setTiposHabitacion(tiposValidos);
+        setCategoriasFiltro(categoriasNombres);
+        setOcupacionesFiltro(ocupacionesValidas);
 
         console.log('✅ Datos cargados exitosamente:', {
-          tipos: tiposData.length,
-          categorias: categoriasData,
-          ocupaciones: ocupacionesData
+          tipos: tiposValidos.length,
+          categorias: categoriasNombres,
+          ocupaciones: ocupacionesValidas
         });
 
       } catch (err) {
@@ -70,24 +80,38 @@ export default function HabitacionesPage() {
   // Lógica de filtrado
   const tiposFiltrados = tiposHabitacion.filter(tipo => {
     const matchCategoria = filtroCategoriaSeleccionada === "Todas" || 
-                          tipo.categoria.nombre === filtroCategoriaSeleccionada;
+                          tipo.categoria?.nombre === filtroCategoriaSeleccionada;
     
     const matchOcupacion = filtroOcupacionSeleccionada === "Todas" || 
-                          tipo.ocupacion.nombre === filtroOcupacionSeleccionada;
+                          tipo.ocupacion?.nombre === filtroOcupacionSeleccionada;
     
     return matchCategoria && matchOcupacion;
   });
 
+  // Log para depuración de filtros
+  useEffect(() => {
+    console.log('🔍 Filtros aplicados:', {
+      categoria: filtroCategoriaSeleccionada,
+      ocupacion: filtroOcupacionSeleccionada,
+      resultados: tiposFiltrados.length
+    });
+  }, [filtroCategoriaSeleccionada, filtroOcupacionSeleccionada, tiposFiltrados.length]);
+
   // Handlers para filtros
   const handleCategoriaChange = (e) => {
-    setFiltroCategoriaSeleccionada(e.target.value);
+    const newValue = e.target.value;
+    console.log('🏷️ Cambio de categoría:', newValue);
+    setFiltroCategoriaSeleccionada(newValue);
   };
 
   const handleOcupacionChange = (e) => {
-    setFiltroOcupacionSeleccionada(e.target.value);
+    const newValue = e.target.value;
+    console.log('👥 Cambio de ocupación:', newValue);
+    setFiltroOcupacionSeleccionada(newValue);
   };
 
   const clearFilters = () => {
+    console.log('🧹 Limpiando filtros');
     setFiltroCategoriaSeleccionada("Todas");
     setFiltroOcupacionSeleccionada("Todas");
   };
@@ -96,14 +120,14 @@ export default function HabitacionesPage() {
   const adaptarDatosParaCard = (tipo) => {
     return {
       _id: tipo.id,
-      name: tipo.nombre,
-      description: tipo.descripcion,
-      image1: tipo.imagenes[0]?.url || '/placeholder-room.jpg', // Imagen 1 o placeholder
-      image2: tipo.imagenes[1]?.url || tipo.imagenes[0]?.url || '/placeholder-room.jpg', // Imagen 2 o repetir 1
-      huespedes: tipo.ocupacion.capacidad,
-      price: tipo.tarifaBase,
-      category: tipo.categoria.nombre,
-      spaceType: tipo.ocupacion.nombre
+      name: tipo.nombre || 'Sin nombre',
+      description: tipo.descripcion || 'Sin descripción',
+      image1: tipo.imagenes?.[0]?.url || '/placeholder-room.jpg',
+      image2: tipo.imagenes?.[1]?.url || tipo.imagenes?.[0]?.url || '/placeholder-room.jpg',
+      huespedes: tipo.ocupacion?.capacidad || 0,
+      price: tipo.tarifaBase || 0,
+      category: tipo.categoria?.nombre || 'Sin categoría',
+      spaceType: tipo.ocupacion?.nombre || 'Sin tipo'
     };
   };
 
@@ -127,11 +151,11 @@ export default function HabitacionesPage() {
         <div className="room-grid">
           {loading ? (
             <div className="loading-container">
-              <p className="loading-message"> Cargando habitaciones...</p>
+              <p className="loading-message">⏳ Cargando habitaciones...</p>
             </div>
           ) : error ? (
             <div className="error-container">
-              <h3>Error al cargar habitaciones</h3>
+              <h3>❌ Error al cargar habitaciones</h3>
               <p>{error}</p>
               <button 
                 className="btn-retry" 
@@ -139,6 +163,11 @@ export default function HabitacionesPage() {
               >
                 Reintentar
               </button>
+            </div>
+          ) : tiposHabitacion.length === 0 ? (
+            <div className="no-results">
+              <h3>⚠️ No hay habitaciones en la base de datos</h3>
+              <p>Por favor, contacta al administrador para cargar habitaciones.</p>
             </div>
           ) : tiposFiltrados.length > 0 ? (
             tiposFiltrados.map((tipo) => (
@@ -149,11 +178,11 @@ export default function HabitacionesPage() {
             ))
           ) : (
             <div className="no-results">
-              <h3>No se encontraron habitaciones</h3>
+              <h3>🔍 No se encontraron habitaciones</h3>
               <p>
                 {filtroCategoriaSeleccionada === "Todas" && filtroOcupacionSeleccionada === "Todas" 
-                  ? 'No hay habitaciones disponibles en este momento.' 
-                  : 'Intenta ajustar los filtros para ver más opciones.'}
+                  ? 'No hay habitaciones disponibles con los criterios seleccionados.' 
+                  : `No hay habitaciones de categoría "${filtroCategoriaSeleccionada}" y tipo "${filtroOcupacionSeleccionada}".`}
               </p>
               {(filtroCategoriaSeleccionada !== "Todas" || filtroOcupacionSeleccionada !== "Todas") && (
                 <button className="btn-clear-filters-inline" onClick={clearFilters}>

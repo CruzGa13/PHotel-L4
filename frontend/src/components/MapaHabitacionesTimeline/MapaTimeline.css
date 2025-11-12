@@ -1,0 +1,557 @@
+/* MapaTimeline.css */
+
+.mapa-timeline-container {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+  overflow: hidden;
+}
+
+/* Panel de navegación superior */
+.panel-navegacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fecha-actual-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+.fecha-label {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.fecha-valor {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.controles-navegacion {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-nav,
+.btn-hoy {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-nav {
+  min-width: 40px;
+  font-size: 20px;
+}
+
+.btn-mes {
+  font-size: 24px;
+}
+
+.btn-hoy {
+  padding: 8px 24px;
+  font-size: 14px;
+}
+
+.btn-nav:hover,
+.btn-hoy:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-nav:active,
+.btn-hoy:active {
+  transform: translateY(0);
+}
+
+/* Timeline wrapper con scroll horizontal */
+.timeline-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Scrollbar personalizado */
+.timeline-wrapper::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.timeline-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.timeline-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.timeline-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Grid del timeline */
+.timeline-grid {
+  display: flex;
+  min-width: max-content;
+}
+
+/* Columna de habitaciones (sticky izquierda) */
+.habitaciones-columna {
+  position: sticky;
+  left: 0;
+  z-index: 30;
+  background: #f9fafb;
+  border-right: 2px solid #e5e7eb;
+  min-width: 200px;
+}
+
+.header-habitacion {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1f2937;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.habitacion-row-header {
+  height: 90px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  transition: background 0.2s ease;
+}
+
+.habitacion-row-header:hover {
+  background: #f9fafb;
+}
+
+.habitacion-numero {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.habitacion-categoria {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.habitacion-tipo {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Contenedor de fechas */
+.fechas-container {
+  flex: 1;
+  min-width: max-content;
+}
+
+/* Cabecera de fechas (sticky top) */
+.fechas-header {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+}
+
+.fecha-cell {
+  min-width: 100px;
+  width: 100px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #e5e7eb;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.fecha-cell:hover {
+  background: #f9fafb;
+}
+
+.fecha-dia {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.fecha-numero {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 4px 0;
+}
+
+.fecha-mes {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* Fecha de hoy - destacada */
+.fecha-hoy {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white;
+  position: relative;
+}
+
+.fecha-hoy .fecha-dia,
+.fecha-hoy .fecha-numero,
+.fecha-hoy .fecha-mes {
+  color: white;
+}
+
+.fecha-hoy::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #fbbf24;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
+}
+
+/* Fin de semana */
+.fecha-weekend {
+  background: #fef3c7 !important;
+}
+
+/* Filas de habitaciones */
+.habitaciones-rows {
+  position: relative;
+}
+
+.habitacion-row {
+  display: flex;
+  height: 90px;
+  position: relative;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dia-cell {
+  min-width: 100px;
+  width: 100px;
+  height: 90px;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  background: #ffffff;
+  transition: background 0.2s ease;
+}
+
+.dia-cell:hover {
+  background: #f9fafb;
+}
+
+/* Día actual - columna destacada */
+.dia-hoy {
+  background: rgba(102, 126, 234, 0.05) !important;
+  position: relative;
+}
+
+.dia-hoy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Día fin de semana */
+.dia-weekend {
+  background: #fffbeb;
+}
+
+/* Bloques de reservas */
+.reserva-block {
+  position: absolute;
+  top: 12px;
+  height: 66px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.reserva-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 15;
+}
+
+.reserva-texto {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Estados de reservas */
+.reserva-confirmada {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
+}
+
+.reserva-ocupada {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #2563eb;
+}
+
+.reserva-pendiente {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-color: #d97706;
+}
+
+.reserva-mantenimiento {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #dc2626;
+}
+
+/* Reserva parcial (continúa fuera del rango visible) */
+.reserva-parcial {
+  opacity: 0.9;
+}
+
+.reserva-parcial::after {
+  content: '...';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: white;
+}
+
+/* Leyenda en esquina inferior del contenedor */
+.leyenda-timeline {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  display: flex;
+  gap: 20px;
+  z-index: 50;
+  transition: all 0.3s ease;
+}
+
+.leyenda-timeline:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leyenda-color {
+  width: 32px;
+  height: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leyenda-color.reserva-confirmada {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.leyenda-color.reserva-ocupada {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.leyenda-color.reserva-pendiente {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.leyenda-color.reserva-mantenimiento {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.leyenda-texto {
+  font-size: 13px;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .panel-navegacion {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .fecha-actual-info {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .controles-navegacion {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .leyenda-timeline {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .habitaciones-columna {
+    min-width: 160px;
+  }
+
+  .habitacion-numero {
+    font-size: 18px;
+  }
+
+  .habitacion-categoria {
+    font-size: 11px;
+  }
+
+  .habitacion-tipo {
+    font-size: 10px;
+  }
+
+  .fecha-cell,
+  .dia-cell {
+    min-width: 80px;
+    width: 80px;
+    height: 85px;
+  }
+
+  .habitacion-row {
+    height: 85px;
+  }
+
+  .habitacion-row-header {
+    height: 85px;
+    padding: 8px 12px;
+  }
+
+  .reserva-block {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mapa-timeline-container {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Estados de carga y vacío */
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}

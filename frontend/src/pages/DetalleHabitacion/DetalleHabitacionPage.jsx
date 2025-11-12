@@ -7,8 +7,9 @@ import GaleriaImagenes from '../../components/detalleHabitacion/GaleriaImagenes'
 import IconosClaveHabitacion from '../../components/detalleHabitacion/IconosClaveHabitacion';
 import ListaAmenidades from '../../components/detalleHabitacion/ListaAmenidades';
 import WidgetReserva from '../../components/detalleHabitacion/WidgetReserva';
+import BreadCrumb from '../../components/BreadCrumb/BreadCrumb';
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 /**
  * Componente de Página de Detalle de Habitación
@@ -155,8 +156,18 @@ export default function DetalleHabitacionPage() {
       {/* Contenedor Principal Centrado */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         
-        {/* Título Principal - CORREGIDO */}
-        <header className="mb-6 pt-12"> {/* Añadí un poco de padding vertical por si acaso */}
+        {/* Breadcrumb controlado */}
+        <BreadCrumb 
+          mode="controlled"
+          items={[
+            { label: "Inicio", to: "/" },
+            { label: "Nuestras habitaciones", to: "/habitaciones" },
+            { label: tipoHabitacion.nombre, current: true }
+          ]} 
+        />
+        
+        {/* Título Principal */}
+        <header className="mb-6 pt-4">
           <h1 className="text-3xl md:text-4xl leading-tight font-bold bg-gradient-to-b from-green-800 to-green-600 bg-clip-text text-transparent">
             {tipoHabitacion.nombre}
           </h1>

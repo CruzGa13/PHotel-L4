@@ -1,17 +1,17 @@
 const { prisma } = require('../lib/prisma');
 
 /**
- * Obtener todas las categorías (solo nombres)
+ * Obtener todas las categorías (id y nombre)
  * 
  * @route GET /api/categorias
  * @access Public
  * 
  * @description
- * Retorna un array simple de strings con los nombres de las categorías.
+ * Retorna un array de objetos con id y nombre de las categorías.
  * Útil para poblar filtros en el frontend.
  * 
- * @returns {Array<string>} 200 - Lista de nombres de categorías
- * @example ['Estándar', 'Deluxe', 'Ejecutiva', 'Suite']
+ * @returns {Array<Object>} 200 - Lista de categorías
+ * @example [{ id: 1, nombre: 'Estándar' }, { id: 2, nombre: 'Suite' }]
  * 
  * @returns {Object} 500 - Error del servidor
  */
@@ -19,20 +19,18 @@ const getAllCategorias = async (req, res) => {
   try {
     const categorias = await prisma.categoria.findMany({
       select: {
+        id: true,
         nombre: true,
       },
       orderBy: {
-        id: 'asc', // Mantener orden consistente
+        id: 'asc',
       },
     });
 
-    // Transformar a array simple de strings
-    const nombresCategorias = categorias.map(cat => cat.nombre);
-
     // Log para depuración
-    console.log('🏷️ Lista de Categorías enviada:', nombresCategorias);
+    console.log('🏷️ Lista de Categorías enviada:', categorias.length);
 
-    return res.status(200).json(nombresCategorias);
+    return res.status(200).json(categorias);
 
   } catch (error) {
     console.error('❌ Error al obtener categorías:', error);

@@ -281,3 +281,93 @@ input[type="password"]::-ms-clear {
 .user-card .chevron.open {
   transform: rotate(180deg);
 }
+
+/* ===== Modal de confirmación (Portal) ===== */
+.umodal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+.umodal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.umodal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.umodal-desc {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.umodal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.umodal-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.umodal-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.umodal-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.umodal-btn-primary {
+  background: linear-gradient(135deg, #15361b, #488c4c);
+  color: #fff;
+}
+
+.umodal-btn-primary:hover {
+  background: linear-gradient(135deg, #0f2614, #3a7a3e);
+  box-shadow: 0 4px 12px rgba(21, 54, 27, 0.25);
+}
+
+.umodal-btn:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}

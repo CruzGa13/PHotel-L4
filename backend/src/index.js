@@ -24,7 +24,32 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: 'http://localhost:5173' })); // tu Vite front
+// TODO: centralizar allowlist si se necesita en múltiples archivos
+// ⚠️ IMPORTANTE: Agregar el dominio de producción del frontend antes de hacer deploy
+const ALLOWLIST = new Set([
+  'http://localhost:5173',
+  // 'https://tu-frontend.vercel.app', // ⚠️ DESCOMENTA Y AGREGA TU DOMINIO DE PRODUCCIÓN
+  // 'https://tu-frontend.netlify.app',
+]);
+
+// CORS con allowlist: permite orígenes válidos + herramientas sin Origin (curl/Postman)
+app.use(cors({
+  origin(origin, callback) {
+    // Permitir si no hay Origin (curl/Postman) o si está en la allowlist
+    if (!origin || ALLOWLIST.has(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origen no permitido'));
+  },
+  credentials: true,
+}));
+
+// ⚠️ IMPORTANTE: Montar webhook de Stripe ANTES de express.json()
+// El webhook necesita el body crudo para verificar la firma
+const pagosRoutes = require('./routes/pagosRoutes');
+app.use('/api/pagos', pagosRoutes);
+
+// Middleware JSON para el resto de la app
 app.use(express.json());
 
 // Rutas
@@ -34,6 +59,9 @@ const auth = require('./routes/auth');
 const tipoHabitacionRoutes = require('./routes/tipoHabitacionRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const ocupacionRoutes = require('./routes/ocupacionRoutes');
+const facturasRoutes = require('./routes/facturasRoutes');
+const habitacionRoutes = require('./routes/habitacionRoutes');
+const emailController = require('./controllers/emailController');
 
 app.use('/pages', pages);
 app.use('/api/users', users);
@@ -41,6 +69,9 @@ app.use('/api/auth', auth);
 app.use('/api/tipos-habitacion', tipoHabitacionRoutes);
 app.use('/api/categorias', categoriaRoutes);
 app.use('/api/ocupaciones', ocupacionRoutes);
+app.use('/api/facturas', facturasRoutes);
+app.use('/api/habitaciones', habitacionRoutes);
+app.use('/api/emails', emailController);
 
 // Ruta que ya tenías
 app.get('/api/hello', (req, res) => {
@@ -50,3 +81,26 @@ app.get('/api/hello', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
+
+// Montar reservasFlow.js (ESM) desde index.js (CommonJS)
+(async () => {
+  try {
+    const reservasFlowRouter = (await import('./routes/reservasFlow.js')).default;
+    app.use('/api', reservasFlowRouter); // expone /api/disponibilidad, /api/pre-reservas, /api/reservas
+    console.log('reservasFlow montado en /api');
+  } catch (e) {
+    console.error('No se pudo montar reservasFlow:', e);
+  }
+})();
+
+// Montar reservas.routes.js (ESM) - Gestión de operador
+(async () => {
+  try {
+    const reservasRouter = (await import('./routes/reservas.routes.js')).default;
+    app.use('/api/reservas', reservasRouter); // expone /api/reservas (GET, PATCH)
+    console.log('reservas.routes montado en /api/reservas');
+  } catch (e) {
+    console.error('No se pudo montar reservas.routes:', e);
+  }
+})();
+

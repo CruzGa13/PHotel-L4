@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
-import "../UserMenu/UserMenu.css";
-import toast, { Toaster } from 'react-hot-toast';
+import "./AuthModal.css";
+import toast from 'react-hot-toast';
 
 // Schema de validación para Login
 const loginSchema = z.object({
@@ -84,7 +84,7 @@ const getPasswordStrength = (password) => {
   if (/[^a-zA-Z0-9]/.test(password)) types++;
 
   if (password.length >= 10 && types >= 3) {
-    return { level: 3, text: "Fuerte", width: "100%", color: "#22c55e" };
+    return { level: 3, text: "Fuerte", width: "100%", color: "#059669" }; // Verde esmeralda del proyecto
   }
   if (password.length >= 8 && types >= 2) {
     return { level: 2, text: "Media", width: "66%", color: "#eab308" };
@@ -248,15 +248,14 @@ const onSubmitRegister = async (data) => {
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
-      <Toaster />
       <DialogContent className={`p-0 gap-0 ${mode === "register" ? "max-w-xl" : "max-w-md"}`}>
         <DialogHeader className="px-6 pt-6 pb-4">
           <DialogTitle className="text-2xl font-bold text-center">
             {mode === "login" ? "INICIAR SESION" : "CREAR CUENTA"}
           </DialogTitle>
           {error && (
-            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600 text-center">{error}</p>
+            <div className="error-message">
+              {error}
             </div>
           )}
         </DialogHeader>
@@ -324,15 +323,15 @@ const onSubmitRegister = async (data) => {
               </div>
             </form>
 
-            <div className="bg-black px-6 py-6 rounded-b-lg">
-              <p className="text-center text-white text-sm mb-3">
+            <div className="auth-footer">
+              <p className="auth-footer-text">
                 ¿Aún no estás registrado?
               </p>
               <Button
                 type="button"
                 onClick={() => handleModeSwitch("register")}
                 variant="outline"
-                className="w-full bg-white text-black hover:bg-gray-100"
+                className="register-btn"
                 size="lg"
               >
                 REGÍSTRATE
@@ -496,16 +495,22 @@ const onSubmitRegister = async (data) => {
               {passwordValue && (
                 <div className="space-y-2 md:col-span-2">
                   <Label>Fuerza de la contraseña</Label>
-                  <div className="h-2 w-full bg-gray-200 rounded overflow-hidden">
+                  <div className="password-strength-bar">
                     <div
-                      className="h-full transition-all duration-300"
+                      className="password-strength-fill"
                       style={{
                         width: passwordStrength.width,
                         backgroundColor: passwordStrength.color,
                       }}
                     />
                   </div>
-                  <p className="text-xs" style={{ color: passwordStrength.color }}>
+                  <p 
+                    className={`password-strength-text ${
+                      passwordStrength.level === 3 ? 'password-strength-strong' : 
+                      passwordStrength.level === 2 ? 'password-strength-medium' : 
+                      'password-strength-weak'
+                    }`}
+                  >
                     {passwordStrength.text}
                   </p>
                 </div>

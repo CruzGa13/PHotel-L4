@@ -1,0 +1,150 @@
+.table-wrap {
+  overflow: hidden;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  /* --- NUEVO: Sombra sutil como en la imagen --- */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* --- MODIFICADO: Gradiente verde como en la imagen --- */
+.table-head {
+  padding: 16px;
+  /* Gradiente verde extraído de la imagen */
+  background: linear-gradient(90deg, #1e9e6d, #34d399);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.table-head h3 {
+  color: #fff;
+  margin: 0;
+  font-weight: 600;
+}
+
+.scroll-x {
+  overflow-x: auto;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* --- MODIFICADO: Estilo de cabecera de tabla de la imagen --- */
+.table th {
+  text-align: left;
+  font-weight: 700;
+  padding: 16px;
+  color: #002d62; /* Azul oscuro */
+  background: #fff; /* Fondo blanco */
+  border-bottom: 1px solid #eef2f7;
+  /* --- NUEVO: Texto un poco más pequeño como en la imagen --- */
+  font-size: 14px;
+}
+
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef2f7;
+  /* --- NUEVO: Alineación vertical --- */
+  vertical-align: middle;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 12px; /* Un poco más de padding */
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* --- MODIFICADO: Estilo "Contestado" de la imagen --- */
+.badge.contestado {
+  background: #fee2e2; /* Fondo rojo claro */
+  color: #dc2626; /* Texto rojo oscuro */
+}
+
+/* --- MODIFICADO: Estilo "Sin Responder" de la imagen --- */
+.badge.sin-responder {
+  background: #dc2626; /* Fondo rojo */
+  color: #fff; /* Texto blanco */
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* --- NUEVO: Estilo base para botones --- */
+.btn {
+  border: none;
+  border-radius: 999px; /* Forma de píldora */
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* --- NUEVO: Estilo para botón "Detalle" (verde) --- */
+.actions .btn-primary {
+  background: #10b981;
+  color: #fff;
+}
+
+/* --- NUEVO: Estilo para botón "Contestar" (rojo) --- */
+.actions .btn-reply {
+  background: #dc2626;
+  color: #fff;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px; /* Más padding */
+  background: #fff;
+  border-top: 1px solid #eef2f7;
+  /* --- NUEVO: Redondeo inferior --- */
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* --- NUEVO: Estilo para texto de paginación --- */
+.pagination span {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.pager {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- NUEVO: Estilos de paginación de la imagen --- */
+.pagination .btn {
+  background: #f3f4f6; /* Gris claro */
+  color: #4b5563; /* Texto gris oscuro */
+  border-radius: 8px; /* Cuadrado redondeado */
+  padding: 8px 12px;
+}
+
+/* --- NUEVO: Estilo de paginación activa (verde) --- */
+.pagination .btn-primary {
+  background: #10b981;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.table tbody tr:hover {
+  background: #f3f4f6;
+  transition: background 0.2s ease;
+}

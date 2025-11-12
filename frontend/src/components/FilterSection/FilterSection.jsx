@@ -14,8 +14,8 @@ import React from 'react';
  * @param {Function} onClearFilters - Handler para limpiar filtros
  */
 export function FilterSection({ 
-  categorias, 
-  ocupaciones, 
+  categorias = [], 
+  ocupaciones = [], 
   categoriaSeleccionada, 
   ocupacionSeleccionada,
   onCategoriaChange, 
@@ -36,8 +36,8 @@ export function FilterSection({
             onChange={onCategoriaChange}
           >
             <option value="Todas">Todas las categorías</option>
-            {categorias.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+            {Array.isArray(categorias) && categorias.map((cat, index) => (
+              <option key={`cat-${index}-${cat}`} value={cat}>{cat}</option>
             ))}
           </select>
         </div>
@@ -52,8 +52,8 @@ export function FilterSection({
             onChange={onOcupacionChange}
           >
             <option value="Todas">Todos los espacios</option>
-            {ocupaciones.map(ocu => (
-              <option key={ocu} value={ocu}>{ocu}</option>
+            {Array.isArray(ocupaciones) && ocupaciones.map((ocu, index) => (
+              <option key={`ocu-${index}-${ocu}`} value={ocu}>{ocu}</option>
             ))}
           </select>
         </div>

@@ -1,0 +1,61 @@
+.kpiRow {
+  display: grid;
+  min-height: 56px;
+  background: rgba(5, 93, 21, 0.02);
+  border-bottom: 1px solid rgba(5, 93, 21, 0.05);
+}
+
+.label {
+  padding: 0.75rem 1rem;
+  border-right: 1px solid rgba(5, 93, 21, 0.1);
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.kpiContainer {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 80px;
+  position: relative;
+}
+
+.kpiCell {
+  padding: 0.5rem;
+  text-align: center;
+  border-right: 1px solid rgba(5, 93, 21, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  position: relative;
+  cursor: help;
+}
+
+/* Overlay absoluto para banda celeste */
+.focalOverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(6, 182, 212, 0.15);
+  pointer-events: none;
+  z-index: 1;
+  transition: left 0.1s ease-out;
+}
+
+.disponibles {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  position: relative;
+  z-index: 2;
+}
+
+.adr {
+  font-size: 0.75rem;
+  color: #6b7280;
+  position: relative;
+  z-index: 2;
+}

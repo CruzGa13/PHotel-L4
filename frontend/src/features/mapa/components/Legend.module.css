@@ -1,0 +1,38 @@
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: rgba(5, 93, 21, 0.03);
+  border-radius: 1rem;
+  border: 1px solid rgba(5, 93, 21, 0.1);
+  font-size: 0.9rem;
+  color: #6b7280;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color {
+  width: 24px;
+  height: 12px;
+  border-radius: 0.25rem;
+}
+
+.confirmada {
+  background: linear-gradient(135deg, #055d15 0%, #0c3f32 100%);
+}
+
+.enCurso {
+  background: linear-gradient(135deg, #0e7490, #06b6d4);
+}
+
+.bloqueo {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
