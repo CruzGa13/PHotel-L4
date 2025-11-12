@@ -28,8 +28,9 @@ const PORT = process.env.PORT || 3000;
 // ⚠️ IMPORTANTE: Agregar el dominio de producción del frontend antes de hacer deploy
 const ALLOWLIST = new Set([
   'http://localhost:5173',
-  // 'https://tu-frontend.vercel.app', // ⚠️ DESCOMENTA Y AGREGA TU DOMINIO DE PRODUCCIÓN
-  // 'https://tu-frontend.netlify.app',
+  // ⚠️ AGREGAR DESPUÉS DEL DEPLOY DE FIREBASE:
+  // 'https://photel-XXXXX.web.app',
+  // 'https://photel-XXXXX.firebaseapp.com',
 ]);
 
 // CORS con allowlist: permite orígenes válidos + herramientas sin Origin (curl/Postman)
