@@ -4,7 +4,7 @@ import "./MapaHabitaciones.css";
 export default function MapaHabitaciones() {
 
   return (
-    <div className="page">
+    <div className="page mapa-habitaciones-page">
       <main className="container-main fade-in">
         {/* Breadcrumb */}
         <div className="breadcrumb">

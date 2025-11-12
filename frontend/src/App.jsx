@@ -7,6 +7,7 @@ import Footer from "./components/Footer/Footer";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Inicio from "./pages/inicio/inicio";
 import HabitacionesModule from "./pages/habitaciones/habitaciones"; 
+import ReservaPage from "./pages/reserva/reserva";
 import DetalleHabitacionPage from "./pages/DetalleHabitacion/DetalleHabitacionPage";
 import ResumenReserva from "./pages/ResumenReserva";
 import ReservaConfirmada from "./pages/ReservaConfirmada";
@@ -57,6 +58,8 @@ const AppLayout = () => {
       setActiveItem("habitaciones-op");
     } else if (path.includes("/habitaciones")) {
       setActiveItem("habitaciones");
+    } else if (path.includes("/reserva")) {
+      setActiveItem("reserva");
     } else if (path.includes("/servicios")) {
       setActiveItem("servicios");
     } else if (path.includes("/contacto")) {
@@ -77,8 +80,13 @@ const AppLayout = () => {
   // Páginas que manejan su propio breadcrumb (modo controlado)
   const hasOwnBreadcrumb = 
     location.pathname.startsWith('/habitaciones/') || // Detalle de habitación
-    location.pathname === '/resumen-reserva' ||      // Pre-reserva
-    location.pathname === '/reserva-confirmada';     // Confirmación
+    location.pathname === '/resumen-reserva' ||       // Pre-reserva
+    location.pathname === '/reserva-confirmada' ||    // Confirmación
+    location.pathname === '/mensajes-op' ||           // Mensajes operador
+    location.pathname === '/habitaciones-op' ||       // Habitaciones operador
+    location.pathname.startsWith('/habitaciones-op/') || // Detalle habitación operador
+    location.pathname === '/reserva-op' ||            // Reservas operador
+    location.pathname === '/mapa-habitaciones';       // Mapa habitaciones
 
   return (
     <>
@@ -162,6 +170,8 @@ const AppLayout = () => {
               IMPORTANTE: Esta ruta debe estar DESPUÉS de /habitaciones
               para que no capture la ruta general */}
           <Route path="/habitaciones/:id" element={<DetalleHabitacionPage />} />
+          {/* 🔹 Ruta para página de reservas */}
+          <Route path="/reserva" element={<ReservaPage />} />
           {/* 🔹 Nueva ruta para resumen de reserva */}
           <Route path="/resumen-reserva" element={<ResumenReserva />} />
           {/* 🔹 Nueva ruta para confirmación de reserva */}

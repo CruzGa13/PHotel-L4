@@ -200,7 +200,71 @@ const getTipoHabitacionById = async (req, res) => {
   }
 };
 
+/**
+ * Obtener todos los tipos de habitación CON TODAS sus imágenes
+ * Específico para página de reservas donde se necesita carrusel completo
+ * 
+ * @route GET /api/tipos-habitacion/reservas
+ * @access Public
+ */
+const getAllTiposHabitacionConImagenes = async (req, res) => {
+  try {
+    const tiposHabitacion = await prisma.tipoHabitacion.findMany({
+      select: {
+        id: true,
+        nombre: true,
+        descripcion: true,
+        tarifaBase: true,
+        categoria: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
+        ocupacion: {
+          select: {
+            id: true,
+            nombre: true,
+            capacidad: true,
+          },
+        },
+        imagenes: {
+          // ✅ TODAS las imágenes (sin take)
+          select: {
+            url: true,
+          },
+          orderBy: {
+            id: 'asc', // Mantener orden consistente
+          },
+        },
+      },
+      orderBy: [
+        { categoriaId: 'asc' },
+        { ocupacionId: 'asc' },
+      ],
+    });
+
+    console.log('🖼️ Tipos con todas las imágenes enviados:', {
+      total: tiposHabitacion.length,
+      imagenesPorTipo: tiposHabitacion.map(t => ({ 
+        nombre: t.nombre, 
+        imagenes: t.imagenes.length 
+      })),
+    });
+
+    return res.status(200).json(tiposHabitacion);
+
+  } catch (error) {
+    console.error('❌ Error al obtener tipos con imágenes:', error);
+    return res.status(500).json({ 
+      error: 'Error al obtener tipos de habitación',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   getAllTiposHabitacion,
-  getTipoHabitacionById, // ← NUEVA FUNCIÓN EXPORTADA
+  getTipoHabitacionById,
+  getAllTiposHabitacionConImagenes, // ← NUEVO
 };

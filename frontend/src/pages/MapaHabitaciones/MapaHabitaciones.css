@@ -1,5 +1,24 @@
 /* MapaHabitaciones.css */
 
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #6b7280;
+  font-size: 14px;
+  margin: 8px 0 16px;
+}
+
+.mapa-habitaciones-page .breadcrumb .pink {
+  color: #764ba2;
+  font-weight: 700;
+}
+
+.breadcrumb .sep {
+  opacity: 0.5;
+}
+
 /* Título con degradado púrpura */
 .mapa-titulo {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -16,6 +17,8 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/AuthContext";
 import "./AuthModal.css";
 import toast from 'react-hot-toast';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Schema de validación para Login
 const loginSchema = z.object({
@@ -94,6 +97,7 @@ const getPasswordStrength = (password) => {
 
 const AuthModal = ({ open, onOpenChange }) => {
   const { setUser } = useAuth();
+  const navigate = useNavigate();
   const [mode, setMode] = useState("login");
   const [showLoginPass, setShowLoginPass] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -134,7 +138,7 @@ const AuthModal = ({ open, onOpenChange }) => {
       if (authError) throw authError;
 
       // 2. Obtener perfil del backend
-      const response = await fetch('http://localhost:3000/api/users/me', {
+      const response = await fetch(`${API}/users/me`, {
         headers: {
           'Authorization': `Bearer ${authData.session.access_token}`,
         },
@@ -149,6 +153,18 @@ const AuthModal = ({ open, onOpenChange }) => {
       // 3. Guardar en contexto y cerrar modal
       setUser(profile);
       onOpenChange(false);
+
+      // 4. Redirigir según el rol del usuario
+      const rolNombre = profile?.rol?.nombre?.toLowerCase();
+      
+      if (rolNombre === 'operador') {
+        // Redirigir a gestión de habitaciones para operadores
+        setTimeout(() => {
+          navigate('/habitaciones-op');
+        }, 500);
+      }
+      // Si es cliente, no redirigir (dejar en la página actual)
+      
     } catch (err) {
       console.error('Error en login:', err);
       setError(err.message || 'Error al iniciar sesión');
@@ -173,7 +189,7 @@ const onSubmitRegister = async (data) => {
       };
 
       // Llamar a la nueva ruta de registro atómico del backend
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch(`${API}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,6 +223,21 @@ const onSubmitRegister = async (data) => {
         duration: 4000,
         position: 'top-center',
       });
+
+      // Redirigir según el rol del usuario
+      const rolNombre = usuario?.rol?.nombre?.toLowerCase();
+      
+      if (rolNombre === 'operador') {
+        // Redirigir a gestión de habitaciones para operadores
+        setTimeout(() => {
+          navigate('/habitaciones-op');
+        }, 500);
+      } else {
+        // Redirigir a inicio para clientes
+        setTimeout(() => {
+          navigate('/inicio');
+        }, 500);
+      }
 
     } catch (err) {
       console.error('Error en registro:', err);

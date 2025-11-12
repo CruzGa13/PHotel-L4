@@ -202,13 +202,15 @@ export default function HabitacionesOp() {
   };
 
   return (
-    <div className="page">
+    <div className="page habitaciones-op-page">
       <main className="container-main fade-in">
         {/* Breadcrumb */}
         <div className="breadcrumb">
           <span>Inicio</span>
           <span className="sep">›</span>
-          <span className="pink">Habitaciones</span>
+          <span>Operador</span>
+          <span className="sep">›</span>
+          <span className="pink">Gestión de Habitaciones</span>
         </div>
 
         {/* Cabecera */}

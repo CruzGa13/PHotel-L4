@@ -210,14 +210,15 @@ export default function ReservaOp() {
   };
 
   return (
-    <div className="page">
+    <div className="page reserva-op-page">
       <main className="container-main fade-in">
         {/* Breadcrumb */}
         <div className="breadcrumb">
-        <div className="breadcrumb breadcrumb-manual"></div>
           <span>Inicio</span>
           <span className="sep">›</span>
-          <span className="pink">Reservas</span>
+          <span>Operador</span>
+          <span className="sep">›</span>
+          <span className="pink">Gestión de Reservas</span>
         </div>
 
         {/* Cabecera */}

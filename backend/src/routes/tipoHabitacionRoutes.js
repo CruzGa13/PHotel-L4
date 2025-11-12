@@ -1,18 +1,32 @@
 const { Router } = require('express');
 const { 
   getAllTiposHabitacion, 
-  getTipoHabitacionById // ← NUEVA FUNCIÓN IMPORTADA
+  getTipoHabitacionById,
+  getAllTiposHabitacionConImagenes // ← NUEVA FUNCIÓN IMPORTADA
 } = require('../controllers/tipoHabitacionController');
 
 const router = Router();
+
+/**
+ * GET /reservas - Obtener todos los tipos CON TODAS sus imágenes
+ * 
+ * Endpoint: /api/tipos-habitacion/reservas
+ * 
+ * IMPORTANTE: Esta ruta debe estar ANTES de /:id para evitar conflictos
+ * 
+ * Retorna:
+ * - Lista completa de tipos de habitación
+ * - Con categoría, ocupación y TODAS las imágenes (no solo la primera)
+ * - Específico para página de reservas con carrusel
+ */
+router.get('/reservas', getAllTiposHabitacionConImagenes); // ← NUEVA RUTA
 
 /**
  * GET /:id - Obtener detalles completos de un tipo de habitación específico
  * 
  * Endpoint: /api/tipos-habitacion/:id
  * 
- * IMPORTANTE: Esta ruta debe estar ANTES de GET / para evitar conflictos
- * (Express evalúa rutas en orden y /:id podría capturar cualquier cosa)
+ * IMPORTANTE: Esta ruta debe estar DESPUÉS de rutas específicas como /reservas
  * 
  * Retorna:
  * - Detalles completos del tipo de habitación
@@ -21,7 +35,7 @@ const router = Router();
  * - Amenidades transformadas a array simple
  * - Superficie, vista, políticas
  */
-router.get('/:id', getTipoHabitacionById); // ← NUEVA RUTA AGREGADA
+router.get('/:id', getTipoHabitacionById);
 
 /**
  * GET / - Obtener todos los tipos de habitación
