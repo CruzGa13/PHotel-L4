@@ -1,7 +1,7 @@
 import React from 'react';
 import ServicesImages from '../../components/ServicesImages/ServicesImages'; 
 import ServiciosIcon from '../../components/ServiciosIcon/ServiciosIcon'; 
-import './Servicios.css'; 
+import './servicios.css'; 
 
 const ServiciosModule = () => {
   return (
