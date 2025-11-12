@@ -18,7 +18,7 @@ import ReservaOp from "./pages/ReservaOp/ReservaOp";
 import HabitacionesOp from "./pages/HabitacionesOp/HabitacionesOp";
 import DetalleHabitaciones from "./pages/DetalleHabitaciones/DetalleHabitaciones";
 import MapaHabitaciones from "./pages/MapaHabitaciones/MapaHabitaciones";
-import Breadcrumb from "./components/Breadcrumb/Breadcrumb.jsx";
+import Breadcrumb from "./components/BreadCrumb/BreadCrumb.jsx";
 import ScrollToTopOffset from "./ScrollToTopOffset";
 import { FaBars } from "react-icons/fa";
 import "./index.css";
