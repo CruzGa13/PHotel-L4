@@ -1,0 +1,740 @@
+================================================================================
+                    INFORME TÉCNICO - PROYECTO HOTEL
+                   Hotel Ríos de Agua Viva - Lenguajes IV
+================================================================================
+
+PROYECTO: Sistema de Gestión Hotelera
+TIPO: Aplicación Web Full-Stack
+ARQUITECTURA: Cliente-Servidor con API RESTful
+
+
+================================================================================
+1. TECNOLOGÍAS UTILIZADAS PARA EL DESARROLLO DEL FRONTEND
+================================================================================
+
+1.1 FRAMEWORK Y LIBRERÍAS PRINCIPALES
+--------------------------------------
+
+• React 19.1.1
+  - Framework principal para la construcción de la interfaz de usuario
+  - Utiliza componentes funcionales con Hooks (useState, useEffect, lazy, Suspense)
+  - Implementa lazy loading para optimización de carga
+  
+• Vite 7.1.7
+  - Herramienta de build moderna y rápida
+  - Reemplazo de webpack con HMR (Hot Module Replacement)
+  - Configuración optimizada para desarrollo y producción
+  
+• React Router DOM 7.9.4
+  - Sistema de navegación SPA (Single Page Application)
+  - Rutas dinámicas y anidadas para navegación cliente-operador
+  - Implementa breadcrumbs y navegación con historial
+
+
+1.2 SISTEMA DE ESTILOS Y UI
+----------------------------
+
+• Tailwind CSS 3.4.1
+  - Framework CSS utility-first para diseño responsivo
+  - Configuración personalizada con tema extendido (colores, bordes, variables CSS)
+  - Plugin tailwindcss-animate para animaciones fluidas
+
+• Radix UI (Componentes)
+  - @radix-ui/react-dialog, alert-dialog, select, label, separator, slot, tooltip
+  - Componentes accesibles sin estilos predefinidos
+  - Base para construir componentes complejos con accesibilidad WAI-ARIA
+
+• Class Variance Authority (CVA) 0.7.1
+  - Gestión de variantes de componentes
+  - Tipado seguro para estilos condicionales
+
+• Lucide React 0.545.0
+  - Librería de iconos moderna y ligera
+  - Reemplazo de Font Awesome con mejor rendimiento
+
+
+1.3 GESTIÓN DE FORMULARIOS Y VALIDACIÓN
+----------------------------------------
+
+• React Hook Form 7.65.0
+  - Gestión eficiente de formularios con validación
+  - Minimiza re-renders innecesarios
+  
+• Zod 4.1.12
+  - Validación de esquemas TypeScript-first
+  - Integración con React Hook Form vía @hookform/resolvers
+
+• @hookform/resolvers 5.2.2
+  - Conectores entre React Hook Form y validadores como Zod
+
+
+1.4 VISUALIZACIÓN DE DATOS
+---------------------------
+
+• Chart.js 4.5.1 + React-ChartJS-2 5.3.1
+  - Gráficos interactivos para dashboards y estadísticas
+  - Visualización de ocupación, ingresos, métricas
+
+• React Calendar Timeline 0.30.0-beta.4
+  - Línea de tiempo para gestión de reservas
+  - Visualización de disponibilidad por habitación
+
+• React Day Picker 9.11.1 + DayJS 1.11.19 + Moment 2.30.1
+  - Selectores de fecha personalizables
+  - Manejo de rangos de fechas para reservas
+
+
+1.5 EXPERIENCIA DE USUARIO (UX)
+--------------------------------
+
+• Framer Motion 12.23.24
+  - Animaciones fluidas y transiciones
+  - Implementación de micro-interacciones
+
+• React Awesome Reveal 4.3.1
+  - Animaciones de entrada al scroll
+  
+• Swiper 12.0.3 + Embla Carousel React 8.6.0 + React Slick 0.31.0
+  - Carruseles para galería de habitaciones
+  - Navegación táctil y responsiva
+
+• React Hot Toast 2.6.0 + React Toastify 11.0.5
+  - Notificaciones no intrusivas
+  - Feedback visual de acciones del usuario
+
+
+1.6 SERVICIOS EXTERNOS (FRONTEND)
+----------------------------------
+
+• Firebase 12.4.0
+  - Hosting de la aplicación (Firebase Hosting)
+  - Analytics para seguimiento de usuarios
+  - Configuración en firebase.js
+
+• EmailJS (@emailjs/browser 4.4.1 + emailjs-com 3.2.0)
+  - Envío de emails desde el cliente
+  - Formulario de contacto sin backend dedicado
+
+• Supabase Client (@supabase/supabase-js 2.76.0)
+  - Autenticación de usuarios
+  - Gestión de sesiones
+  - Almacenamiento de archivos (imágenes de habitaciones)
+
+
+1.7 GESTIÓN DE ESTADO Y NETWORKING
+-----------------------------------
+
+• Axios 1.13.2
+  - Cliente HTTP para comunicación con backend
+  - Interceptores para manejo de errores y autenticación
+  - Configuración centralizada en services/
+
+• Context API (React)
+  - Gestión de estado global (contexto de usuario, reservas)
+  - Evita prop drilling en componentes anidados
+
+
+1.8 HERRAMIENTAS DE DESARROLLO
+-------------------------------
+
+• ESLint 9.36.0
+  - Linting de código JavaScript/JSX
+  - Plugins: react-hooks, react-refresh
+  
+• Vite Plugin React 5.0.4
+  - Fast Refresh para desarrollo rápido
+  
+• PostCSS 8.5.6 + Autoprefixer 10.4.21
+  - Procesamiento de CSS con prefijos automáticos
+
+
+1.9 JUSTIFICACIÓN DE TECNOLOGÍAS FRONTEND
+------------------------------------------
+
+- React: Ecosistema maduro, gran comunidad, rendimiento optimizado con Virtual DOM
+- Vite: Velocidad de desarrollo superior a webpack, builds optimizados
+- Tailwind CSS: Desarrollo rápido, diseño consistente, bundle size optimizado
+- Radix UI: Accesibilidad incorporada, componentes headless customizables
+- Supabase: Backend-as-a-Service que acelera desarrollo de autenticación
+- Chart.js: Librería de gráficos versátil y bien documentada
+
+
+================================================================================
+2. TECNOLOGÍAS Y HERRAMIENTAS APLICADAS EN EL BACKEND
+================================================================================
+
+2.1 RUNTIME Y FRAMEWORK
+-----------------------
+
+• Node.js (Runtime JavaScript del lado del servidor)
+  - Versión: Compatible con ES6+ y CommonJS
+  - Permite código asíncrono eficiente con event loop
+  
+• Express.js 5.1.0
+  - Framework minimalista para APIs RESTful
+  - Middleware para CORS, body parsing, rutas modulares
+  - Arquitectura MVC (Modelo-Vista-Controlador)
+
+
+2.2 BASE DE DATOS Y ORM
+-----------------------
+
+• Prisma ORM 6.17.1
+  - ORM TypeScript-first para PostgreSQL
+  - Schema declarativo en schema.prisma
+  - Migraciones automáticas y type-safe queries
+  - Cliente generado en generated/prisma/
+  
+• @prisma/client 6.17.1
+  - Cliente de base de datos generado automáticamente
+  - IntelliSense completo para modelos y relaciones
+
+
+2.3 SERVICIOS EXTERNOS (BACKEND)
+---------------------------------
+
+• Supabase (@supabase/supabase-js 2.76.0)
+  - Autenticación de usuarios (JWT)
+  - Cliente público y admin (service role)
+  - Gestión de usuarios, roles, sesiones
+
+• Stripe 19.2.0
+  - Pasarela de pagos para reservas
+  - Webhooks para confirmación de pagos
+  - Implementado en routes/pagosRoutes.js
+
+
+2.4 COMUNICACIÓN Y EMAILS
+--------------------------
+
+• Nodemailer 7.0.10
+  - Envío de emails transaccionales (confirmaciones, facturas)
+  - Configuración SMTP
+
+• IMAPFlow 1.1.1
+  - Lectura de emails desde Gmail vía IMAP
+  - Sincronización de bandeja de entrada
+
+• MailParser 3.9.0
+  - Parseo de emails complejos
+  - Extracción de adjuntos y contenido HTML/texto
+
+• HTML-to-Text 9.0.5 + Sanitize-HTML 2.17.0
+  - Conversión de HTML a texto plano
+  - Sanitización para prevenir XSS
+
+
+2.5 GENERACIÓN DE DOCUMENTOS
+-----------------------------
+
+• PDFKit 0.17.2
+  - Generación dinámica de facturas en PDF
+  - Creación de reportes y comprobantes
+
+
+2.6 MIDDLEWARE Y UTILIDADES
+----------------------------
+
+• CORS 2.8.5
+  - Control de acceso entre orígenes
+  - Allowlist configurada para frontend en localhost y Vercel
+
+• dotenv 17.2.3
+  - Gestión de variables de entorno (.env)
+  - Configuración de credenciales sensibles
+
+• Nodemon 3.1.10 (DevDependency)
+  - Auto-reload del servidor en desarrollo
+  - Monitoreo de cambios en archivos
+
+
+2.7 ARQUITECTURA DEL BACKEND
+-----------------------------
+
+Estructura de directorios:
+
+backend/
+├── src/
+│   ├── controllers/      # Lógica de negocio (authController, userController, etc.)
+│   ├── routes/           # Definición de endpoints
+│   ├── middlewares/      # Middleware de autenticación
+│   ├── lib/              # Clientes (Supabase, Prisma)
+│   ├── services/         # Servicios reutilizables
+│   └── index.js          # Punto de entrada del servidor
+├── prisma/
+│   ├── schema.prisma     # Esquema de base de datos
+│   └── seed.js           # Datos de prueba
+└── package.json
+
+
+Patrón MVC adaptado:
+- Modelos: Definidos en Prisma Schema
+- Vistas: No aplica (API REST devuelve JSON)
+- Controladores: Lógica en controllers/
+- Rutas: Mapeo HTTP en routes/
+
+
+2.8 DEPLOYMENT Y HOSTING
+-------------------------
+
+• Railway.app
+  - Plataforma de hosting del backend
+  - Configuración en railway.json
+  - Build con Nixpacks
+  - Auto-deploy desde repositorio Git
+  - Variables de entorno configuradas en Railway
+
+• Comando de inicio: npm run start (node src/index.js)
+
+
+2.9 JUSTIFICACIÓN DE TECNOLOGÍAS BACKEND
+-----------------------------------------
+
+- Node.js + Express: Stack JavaScript completo, desarrollo unificado frontend-backend
+- Prisma: Type-safety, migraciones automáticas, queries optimizadas
+- Supabase Auth: Solución robusta de autenticación sin implementar JWT manual
+- Stripe: Estándar de la industria para pagos online
+- Railway: Deployment simplificado, escalabilidad automática
+
+
+================================================================================
+3. GESTORES DE BASE DE DATOS Y ESQUEMAS IMPLEMENTADOS
+================================================================================
+
+3.1 SISTEMA DE GESTIÓN DE BASE DE DATOS
+----------------------------------------
+
+• PostgreSQL (Proveedor: Neon.tech)
+  - Base de datos relacional SQL
+  - Conexión vía DATABASE_URL en .env
+  - Soporte para transacciones ACID
+  - Escalabilidad horizontal y vertical
+
+
+3.2 ESQUEMA DE BASE DE DATOS (Prisma Schema)
+---------------------------------------------
+
+3.2.1 ENUMERACIONES (ENUMs)
+---------------------------
+- EstadoHabitacion: Disponible | Ocupada | Mantenimiento
+- EstadoReserva: Pendiente | Confirmada | CheckIn | CheckOut | Cancelada
+- EstadoFactura: Emitida | Pagada | Anulada
+- EstadoConsulta: Pendiente | Respondida
+- TipoEventoHabitacion: Apertura | Cierre | Mantenimiento
+- Genero: Femenino | Masculino | NoBinario | PrefieroNoDecir | Otro
+- TipoBloqueo: Mantenimiento | FueraDeServicio | BloqueoOperativo
+- EstadoEmail: NoLeido | Leido | Respondido | Archivado | Spam
+- PrioridadEmail: Alta | Media | Baja
+- CanalEmail: Email | Web | WhatsApp
+
+
+3.2.2 MÓDULO DE USUARIOS Y AUTENTICACIÓN
+-----------------------------------------
+
+Usuario (usuarios)
+  - id: String (UUID de Supabase Auth)
+  - nombre, apellido, fechaNacimiento, genero
+  - telefono, direccion, provincia
+  - estado: Boolean (activo/inactivo)
+  - rolId → Rol
+  - Relaciones: reservas, consultas, eventos, emails
+
+Rol (roles)
+  - id: Int (autoincremental)
+  - nombre: String (Cliente, Operador, Administrador)
+  - descripcion
+
+
+3.2.3 MÓDULO DE HABITACIONES (Refactorizado)
+---------------------------------------------
+
+Categoria (categorias)
+  - id, nombre, descripcion
+  - Ej: Estándar, Deluxe, Premium
+
+Ocupacion (ocupaciones)
+  - id, nombre, capacidad, descripcionCamas
+  - Ej: Doble Queen (2 personas), Triple Twin (3 personas)
+
+TipoHabitacion (tipos_habitacion)
+  - id, nombre (marketing), descripcion
+  - categoriaId → Categoria
+  - ocupacionId → Ocupacion
+  - tarifaBase, superficie, vista, politicas
+  - Relaciones: habitaciones, imagenes, amenidades
+
+Amenidad (amenidades)
+  - id, nombre, descripcion, icono
+  - Ej: Wi-Fi, TV Cable, Minibar, Aire Acondicionado
+
+TipoHabitacionAmenidad (tipos_habitacion_amenidades)
+  - Tabla de unión Many-to-Many
+  - tipoHabitacionId + amenidadId
+
+ImagenHabitacion (imagenes_habitacion)
+  - id, tipoHabitacionId, url, descripcion
+
+Habitacion (habitaciones)
+  - id, numero, piso, estado
+  - tipoHabitacionId → TipoHabitacion
+  - Relaciones: reservas, eventos, bloqueos
+
+
+3.2.4 MÓDULO DE RESERVAS Y FACTURACIÓN
+---------------------------------------
+
+Reserva (reservas)
+  - id, clienteId → Usuario, administradorId → Usuario
+  - fechaIngreso, fechaEgreso
+  - adultos, ninios
+  - estado: EstadoReserva
+  - totalAlojamiento, totalServicios, totalFinal
+  - contactoEmail, creadaEn
+  - Relaciones: habitaciones, servicios, factura, movimientos
+
+ReservaHabitacion (reservas_habitacion)
+  - Tabla de unión con detalles
+  - reservaId + habitacionId
+  - precioUnitario, subtotal, observaciones
+
+Servicio (servicios)
+  - id, nombre, descripcion, precioBase, estado
+  - Ej: Desayuno, Cena, Traslado, Lavandería
+
+ReservaServicio (reservas_servicios)
+  - reservaId + servicioId
+  - cantidad, precioUnitario, subtotal, fecha
+
+Factura (facturas)
+  - id, reservaId (unique), numeroFactura
+  - metodoPagoId → MetodoPago
+  - fechaEmision, subtotal, impuestos, total
+  - estado: EstadoFactura
+
+MetodoPago (metodos_pago)
+  - id, nombre (Efectivo, Tarjeta, Transferencia)
+
+ReservaMovimiento (reservas_movimientos)
+  - Auditoría de cambios de estado
+  - estadoAnt → estadoNuevo, cambiadoEn, operadorId
+
+
+3.2.5 MÓDULO DE BLOQUEOS Y MANTENIMIENTO
+-----------------------------------------
+
+HabitacionBloqueo (habitaciones_bloqueos)
+  - habitacionId, desde, hasta
+  - motivo, tipo: TipoBloqueo
+  - creadoPorId → Usuario
+  - Índices en (habitacionId, desde, hasta)
+
+HabitacionEvento (habitaciones_eventos)
+  - Auditoría de eventos
+  - habitacionId, adminId, tipo, detalle, fecha
+
+
+3.2.6 MÓDULO DE COMUNICACIÓN Y CONSULTAS
+-----------------------------------------
+
+Consulta (consultas)
+  - id, nombre, email, asunto, mensaje
+  - estado: EstadoConsulta
+  - creadaEn, respondidaEn, respuesta
+  - operadorId → Usuario
+  - emailVinculado → Email
+
+Email (emails)
+  - Sistema IMAP/SMTP de gestión de emails
+  - messageId (unique), gmailId, threadId
+  - deNombre, deEmail, paraNombres, paraEmails
+  - asunto, cuerpoTexto, cuerpoHtml
+  - canal: CanalEmail, prioridad, estado
+  - fechaRecibido, fechaSincronizado, fechaLeido
+  - operadorId → Usuario, consultaId → Consulta
+  - Relaciones: adjuntos, respuestas
+
+EmailAdjunto (emails_adjuntos)
+  - emailId, nombreArchivo, mimeType, tamano
+  - rutaLocal | urlS3 | dataBase64
+
+EmailRespuesta (emails_respuestas)
+  - emailId, operadorId
+  - asunto, cuerpoTexto, cuerpoHtml
+  - messageIdRespuesta, estadoEnvio, fechaEnviado
+
+
+3.3 RELACIONES PRINCIPALES
+---------------------------
+
+- Usuario → Reservas (1:N): Un usuario puede tener múltiples reservas
+- Reserva → ReservaHabitacion → Habitacion (N:M): Una reserva puede incluir varias habitaciones
+- Reserva → ReservaServicio → Servicio (N:M): Una reserva puede tener servicios extra
+- TipoHabitacion → Amenidad (N:M): Un tipo tiene varias amenidades
+- Email → EmailRespuesta (1:N): Un email puede tener múltiples respuestas
+- Habitacion → HabitacionBloqueo (1:N): Una habitación puede tener múltiples bloqueos
+
+
+3.4 ÍNDICES Y OPTIMIZACIÓN
+---------------------------
+
+Índices creados en Prisma Schema:
+- @@index([habitacionId, desde]) en HabitacionBloqueo
+- @@index([deEmail]) en Email
+- @@index([threadId]) en Email
+- @@index([estado, prioridad]) en Email
+- @@unique([categoriaId, ocupacionId, nombre]) en TipoHabitacion
+
+
+3.5 MIGRACIONES Y SEEDS
+------------------------
+
+- Migraciones: Generadas automáticamente por Prisma
+- Seed: prisma/seed.js para datos iniciales (roles, categorías, ocupaciones)
+- Comando: npm run prisma migrate dev
+
+
+================================================================================
+4. APIs UTILIZADAS O DESARROLLADAS
+================================================================================
+
+4.1 API REST PROPIA (Backend)
+------------------------------
+
+Propósito: Comunicación entre frontend y backend del sistema hotelero
+
+Arquitectura RESTful:
+- Base URL: http://localhost:3000/api (desarrollo)
+- Formato: JSON (application/json)
+- Métodos HTTP: GET, POST, PATCH, DELETE
+- Autenticación: JWT Bearer Token (Supabase Auth)
+
+
+4.1.1 ENDPOINTS PRINCIPALES
+----------------------------
+
+** AUTENTICACIÓN **
+POST   /api/auth/register      - Registro de usuarios
+POST   /api/auth/login         - Inicio de sesión
+GET    /api/auth/me            - Obtener usuario actual
+
+** USUARIOS **
+GET    /api/users              - Listar usuarios (admin)
+GET    /api/users/:id          - Obtener usuario por ID
+PATCH  /api/users/:id          - Actualizar usuario
+
+** HABITACIONES **
+GET    /api/habitaciones       - Listar habitaciones (paginado, filtros)
+GET    /api/habitaciones/:id   - Obtener habitación específica
+POST   /api/habitaciones       - Crear habitación (admin)
+PATCH  /api/habitaciones/:id   - Actualizar habitación
+
+** TIPOS DE HABITACIÓN **
+GET    /api/tipos-habitacion   - Listar tipos con amenidades e imágenes
+GET    /api/tipos-habitacion/:id - Obtener tipo específico
+POST   /api/tipos-habitacion   - Crear tipo (admin)
+
+** CATEGORÍAS Y OCUPACIONES **
+GET    /api/categorias         - Listar categorías
+GET    /api/ocupaciones        - Listar ocupaciones
+
+** RESERVAS - FLUJO CLIENTE **
+GET    /api/disponibilidad     - Consultar disponibilidad por fechas
+POST   /api/pre-reservas       - Crear pre-reserva temporal
+POST   /api/reservas           - Confirmar reserva con pago
+
+** RESERVAS - GESTIÓN OPERADOR **
+GET    /api/reservas           - Listar reservas (filtros, estados)
+PATCH  /api/reservas/:id       - Actualizar estado de reserva
+GET    /api/reservas/:id       - Obtener detalles de reserva
+
+** PAGOS (STRIPE) **
+POST   /api/pagos/create-checkout-session - Crear sesión de pago
+POST   /api/pagos/webhook     - Webhook de Stripe (verificación)
+
+** FACTURAS **
+GET    /api/facturas/:id/pdf  - Generar factura en PDF
+
+** EMAILS **
+GET    /api/emails            - Listar emails (IMAP)
+POST   /api/emails/:id/reply  - Responder email
+PATCH  /api/emails/:id        - Actualizar estado (leído, archivado)
+
+
+4.1.2 MODO DE INTEGRACIÓN (API PROPIA)
+---------------------------------------
+
+Frontend → Backend:
+1. Cliente Axios configurado en frontend/src/services/
+2. Token JWT almacenado en Supabase Session
+3. Interceptores para agregar Authorization header
+4. Manejo centralizado de errores (try-catch, toasts)
+
+Ejemplo:
+```javascript
+// frontend/src/services/habitaciones.api.js
+const response = await axios.get(`${API_BASE_URL}/habitaciones`, {
+  params: { page: 1, pageSize: 10 }
+});
+```
+
+Backend:
+1. Middleware de autenticación valida JWT
+2. Controladores procesan lógica de negocio
+3. Prisma Client ejecuta queries
+4. Respuesta JSON estandarizada
+
+
+4.2 API SUPABASE (Authentication & Storage)
+--------------------------------------------
+
+Propósito: Autenticación de usuarios y almacenamiento de archivos
+
+Servicios utilizados:
+- Supabase Auth: Registro, login, gestión de sesiones
+- Supabase Storage: Almacenamiento de imágenes de habitaciones
+
+Integración Frontend:
+```javascript
+import { supabase } from '@/lib/supabase';
+const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+```
+
+Integración Backend:
+```javascript
+const { supabasePublic, supabaseAdmin } = require('./lib/supabase');
+const { data: { user } } = await supabasePublic.auth.getUser(token);
+```
+
+Modo de integración:
+- SDK oficial @supabase/supabase-js
+- Cliente público (frontend) con anon key
+- Cliente admin (backend) con service role key
+- Tokens JWT validados en middleware
+
+
+4.3 API STRIPE (Pagos Online)
+------------------------------
+
+Propósito: Procesamiento de pagos de reservas
+
+Servicios utilizados:
+- Checkout Sessions: Flujo de pago hosted
+- Webhooks: Confirmación de pagos exitosos
+
+Modo de integración:
+1. Frontend solicita sesión de pago al backend
+2. Backend crea Checkout Session con Stripe API
+3. Usuario redirigido a Stripe Checkout
+4. Stripe envía webhook al backend tras pago exitoso
+5. Backend valida firma y actualiza estado de reserva
+
+Endpoints:
+- POST /api/pagos/create-checkout-session
+- POST /api/pagos/webhook (raw body para verificación)
+
+Formato: JSON
+Autenticación: Secret Key en backend, Webhook Secret para verificación
+
+
+4.4 API EMAILJS (Emails desde Cliente)
+---------------------------------------
+
+Propósito: Envío de emails de contacto desde formulario web
+
+Modo de integración:
+- SDK @emailjs/browser en frontend
+- Configuración con Service ID, Template ID, Public Key
+- Envío directo desde navegador sin backend
+
+Uso:
+```javascript
+import emailjs from '@emailjs/browser';
+emailjs.send(serviceID, templateID, formData, publicKey);
+```
+
+
+4.5 API FIREBASE (Analytics & Hosting)
+---------------------------------------
+
+Propósito: 
+- Hosting del frontend
+- Analytics de usuarios
+
+Servicios utilizados:
+- Firebase Hosting: Deploy de aplicación React
+- Firebase Analytics: Seguimiento de métricas
+
+Modo de integración:
+- SDK firebase en frontend/src/firebase.js
+- Deploy con firebase deploy
+- Analytics automático tras inicialización
+
+
+4.6 API GMAIL (IMAP/SMTP)
+--------------------------
+
+Propósito: Lectura y envío de emails institucionales
+
+Servicios utilizados:
+- IMAP (IMAPFlow): Lectura de bandeja de entrada
+- SMTP (Nodemailer): Envío de respuestas
+
+Modo de integración Backend:
+1. IMAPFlow conecta a Gmail vía IMAP
+2. MailParser extrae contenido y adjuntos
+3. Almacenamiento en tabla Email
+4. Nodemailer envía respuestas vía SMTP
+5. Vinculación con modelo EmailRespuesta
+
+Autenticación: Contraseñas de aplicación de Gmail
+
+
+4.7 RESUMEN DE INTEGRACIÓN DE APIs
+-----------------------------------
+
+API Propia (REST):
+- Protocolo: HTTP/HTTPS
+- Formato: JSON
+- Autenticación: JWT Bearer Token
+- CORS: Configurado con allowlist
+
+APIs Externas:
+- Supabase: SDK JavaScript, JWT
+- Stripe: REST API, Webhooks con firma
+- EmailJS: SDK JavaScript
+- Firebase: SDK JavaScript
+- Gmail IMAP/SMTP: Protocolos estándar
+
+
+================================================================================
+CONCLUSIONES Y ARQUITECTURA GENERAL
+================================================================================
+
+STACK TECNOLÓGICO COMPLETO:
+
+Frontend: React + Vite + Tailwind CSS + Supabase Auth
+Backend: Node.js + Express + Prisma ORM
+Base de Datos: PostgreSQL (Neon.tech)
+Autenticación: Supabase Auth (JWT)
+Pagos: Stripe
+Emails: Gmail IMAP/SMTP + EmailJS
+Hosting: Firebase (Frontend) + Railway (Backend)
+
+PATRONES DE DISEÑO:
+- MVC en backend
+- Component-Based Architecture en frontend
+- Repository Pattern con Prisma
+- Middleware Chain en Express
+
+CARACTERÍSTICAS DESTACADAS:
+- Sistema de reservas con disponibilidad en tiempo real
+- Gestión multirol (Cliente, Operador, Administrador)
+- Sistema de emails bidireccional (recepción y envío)
+- Generación de facturas en PDF
+- Pasarela de pagos integrada
+- Panel de control con métricas y gráficos
+- Diseño responsivo y accesible
+
+================================================================================
+FIN DEL INFORME TÉCNICO
+================================================================================

@@ -57,21 +57,6 @@ export default function FiltroMensajes({ filtros, onFiltroChange, onLimpiar }) {
               <option value="WhatsApp">💬 WhatsApp</option>
             </select>
           </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="prioridad">Prioridad</label>
-            <select
-              id="prioridad"
-              className={styles.select}
-              value={filtros.prioridad || 'Todos'}
-              onChange={(e) => handleChange('prioridad', e.target.value)}
-            >
-              <option value="Todos">Todos</option>
-              <option value="Alta">🔴 Alta</option>
-              <option value="Media">🟡 Media</option>
-              <option value="Baja">🔵 Baja</option>
-            </select>
-          </div>
         </div>
 
         {/* Fila 3: Rango de fechas */}

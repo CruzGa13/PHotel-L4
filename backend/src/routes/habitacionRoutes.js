@@ -3,6 +3,10 @@ const {
   getAllHabitaciones, 
   getHabitacionesKpis, 
   getHabitacionById,
+  getHabitacionesByTipo,  // ✅ NUEVO
+  createHabitacion,        // ✅ NUEVO
+  updateHabitacion,        // ✅ NUEVO
+  deleteHabitacion,        // ✅ NUEVO
   updateHabitacionEstado,
   bloquearHabitacion,
   getAllBloqueos
@@ -27,11 +31,41 @@ router.get('/kpis', getHabitacionesKpis);
 router.get('/bloqueos', getAllBloqueos);
 
 /**
+ * GET /tipo/:tipoHabitacionId - Obtener habitaciones por tipo
+ * Endpoint: /api/habitaciones/tipo/:tipoHabitacionId
+ * Retorna: Array de habitaciones del tipo especificado
+ */
+router.get('/tipo/:tipoHabitacionId', getHabitacionesByTipo);
+
+/**
+ * POST / - Crear nueva habitación
+ * Endpoint: /api/habitaciones
+ * Body: { numero, piso, tipoHabitacionId, estado? }
+ * Retorna: { message, data: HabitacionDTO }
+ */
+router.post('/', createHabitacion);
+
+/**
  * GET /:id - Obtener detalle de una habitación
  * Endpoint: /api/habitaciones/:id
  * Retorna: { id, numero, piso, estado, tipoHabitacion }
  */
 router.get('/:id', getHabitacionById);
+
+/**
+ * PUT /:id - Actualizar habitación
+ * Endpoint: /api/habitaciones/:id
+ * Body: { numero?, piso?, tipoHabitacionId?, estado? }
+ * Retorna: { message, data: HabitacionDTO }
+ */
+router.put('/:id', updateHabitacion);
+
+/**
+ * DELETE /:id - Eliminar habitación
+ * Endpoint: /api/habitaciones/:id
+ * Retorna: { message, numero }
+ */
+router.delete('/:id', deleteHabitacion);
 
 /**
  * POST /:id/bloquear - Crear bloqueo de habitación

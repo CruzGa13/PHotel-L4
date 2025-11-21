@@ -2,7 +2,10 @@ const { Router } = require('express');
 const { 
   getAllTiposHabitacion, 
   getTipoHabitacionById,
-  getAllTiposHabitacionConImagenes // ← NUEVA FUNCIÓN IMPORTADA
+  getAllTiposHabitacionConImagenes,
+  createTipoHabitacion,  // ✅ NUEVO
+  updateTipoHabitacion,
+  deleteTipoHabitacion
 } = require('../controllers/tipoHabitacionController');
 
 const router = Router();
@@ -38,6 +41,26 @@ router.get('/reservas', getAllTiposHabitacionConImagenes); // ← NUEVA RUTA
 router.get('/:id', getTipoHabitacionById);
 
 /**
+ * POST / - Crear un nuevo tipo de habitación
+ * 
+ * Endpoint: /api/tipos-habitacion
+ * Access: Private (Operador/Admin)
+ * 
+ * Body:
+ * - nombre (required)
+ * - descripcion (required)
+ * - categoriaId (required)
+ * - ocupacionId (required)
+ * - tarifaBase (required)
+ * - superficie (optional)
+ * - vista (optional)
+ * - politicas (optional)
+ * - amenidadesIds (optional array)
+ * - imagenesNuevas (optional array)
+ */
+router.post('/', createTipoHabitacion);
+
+/**
  * GET / - Obtener todos los tipos de habitación
  * 
  * Endpoint: /api/tipos-habitacion
@@ -48,5 +71,35 @@ router.get('/:id', getTipoHabitacionById);
  * - Ordenados por categoría y ocupación
  */
 router.get('/', getAllTiposHabitacion);
+
+/**
+ * PUT /:id - Actualizar un tipo de habitación
+ * 
+ * Endpoint: /api/tipos-habitacion/:id
+ * Access: Private (Operador/Admin)
+ * 
+ * Body:
+ * - nombre (required)
+ * - descripcion
+ * - categoriaId (required)
+ * - ocupacionId (required)
+ * - tarifaBase (required)
+ * - superficie
+ * - vista
+ * - politicas
+ */
+router.put('/:id', updateTipoHabitacion);
+
+/**
+ * DELETE /:id - Eliminar un tipo de habitación
+ * 
+ * Endpoint: /api/tipos-habitacion/:id
+ * Access: Private (Admin)
+ * 
+ * Validaciones:
+ * - No se puede eliminar si tiene habitaciones vinculadas
+ * - Elimina automáticamente amenidades e imágenes relacionadas
+ */
+router.delete('/:id', deleteTipoHabitacion);
 
 module.exports = router;

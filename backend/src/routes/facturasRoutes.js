@@ -60,7 +60,8 @@ router.get('/:reservaId', async (req, res) => {
 
     // Extraer datos necesarios
     const reserva = factura.reserva;
-    const tipoHabitacion = reserva.habitaciones[0]?.habitacion?.tipoHabitacion || null;
+    const habitacionAsignada = reserva.habitaciones[0]?.habitacion || null;
+    const tipoHabitacion = habitacionAsignada?.tipoHabitacion || null;
 
     // Preparar datos del cliente para el PDF
     const cliente = {
@@ -83,6 +84,7 @@ router.get('/:reservaId', async (req, res) => {
       reserva,
       cliente,
       tipoHabitacion,
+      habitacionAsignada,
     });
 
     // Manejar eventos del stream

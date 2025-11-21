@@ -5,6 +5,7 @@ import './BreadCrumb.css'; // Estilos del breadcrumb
 // Mapa para nombres estáticos
 const BREADCRUMB_NAME_MAP = {
   '/habitaciones': 'Nuestras Habitaciones',
+  '/reserva': 'Reserva',
   '/servicios': 'Servicios Exclusivos',
   '/contacto': 'Contacto',
   // Añade otras rutas estáticas si las tenés

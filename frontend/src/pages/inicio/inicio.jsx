@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import BlockQuote from "../../components/BlockQuote/BlockQuote";
 import Carousel from "../../components/Carousel/Carousel";
 import Images from "../../components/Images/Images";
+import "./inicio.css";
 
 const Inicio = () => {
   return (

@@ -623,10 +623,280 @@ const getAllBloqueos = async (req, res) => {
   }
 };
 
+/**
+ * Obtener habitaciones por tipo de habitación
+ * GET /api/habitaciones/tipo/:tipoHabitacionId
+ */
+const getHabitacionesByTipo = async (req, res) => {
+  try {
+    const tipoHabitacionId = parseInt(req.params.tipoHabitacionId, 10);
+
+    if (isNaN(tipoHabitacionId)) {
+      return res.status(400).json({ error: 'ID de tipo inválido' });
+    }
+
+    console.log(`📋 Obteniendo habitaciones del tipo ID ${tipoHabitacionId}...`);
+
+    const habitaciones = await prisma.habitacion.findMany({
+      where: { tipoHabitacionId },
+      select: {
+        id: true,
+        numero: true,
+        piso: true,
+        estado: true,
+      },
+      orderBy: { numero: 'asc' },
+    });
+
+    console.log(`✅ ${habitaciones.length} habitaciones encontradas para tipo ID ${tipoHabitacionId}`);
+
+    return res.status(200).json(habitaciones);
+
+  } catch (error) {
+    console.error('❌ Error al obtener habitaciones por tipo:', error);
+    return res.status(500).json({
+      error: 'Error al obtener habitaciones',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * Crear una nueva habitación
+ * POST /api/habitaciones
+ */
+const createHabitacion = async (req, res) => {
+  try {
+    const { numero, piso, tipoHabitacionId, estado = 'Disponible' } = req.body;
+
+    console.log('📥 Datos recibidos para crear habitación:', {
+      numero,
+      piso,
+      tipoHabitacionId,
+      estado
+    });
+
+    // Validaciones
+    if (!numero || !piso || !tipoHabitacionId) {
+      return res.status(400).json({
+        error: 'Campos requeridos: numero, piso, tipoHabitacionId'
+      });
+    }
+
+    // Validar que el número no exista
+    const habitacionExistente = await prisma.habitacion.findUnique({
+      where: { numero }
+    });
+
+    if (habitacionExistente) {
+      console.log(`❌ Habitación con número ${numero} ya existe`);
+      return res.status(409).json({
+        error: `Ya existe una habitación con el número ${numero}`
+      });
+    }
+
+    // Validar que el tipo existe
+    const tipoExiste = await prisma.tipoHabitacion.findUnique({
+      where: { id: parseInt(tipoHabitacionId) }
+    });
+
+    if (!tipoExiste) {
+      return res.status(404).json({
+        error: 'Tipo de habitación no encontrado'
+      });
+    }
+
+    // Crear habitación
+    const nuevaHabitacion = await prisma.habitacion.create({
+      data: {
+        numero,
+        piso: parseInt(piso),
+        tipoHabitacionId: parseInt(tipoHabitacionId),
+        estado
+      },
+      select: {
+        id: true,
+        numero: true,
+        piso: true,
+        estado: true,
+        tipoHabitacion: {
+          select: {
+            id: true,
+            nombre: true
+          }
+        }
+      }
+    });
+
+    console.log(`✅ Habitación ${numero} creada exitosamente con ID ${nuevaHabitacion.id}`);
+
+    return res.status(201).json({
+      message: 'Habitación creada exitosamente',
+      data: nuevaHabitacion
+    });
+
+  } catch (error) {
+    console.error('❌ Error al crear habitación:', error);
+    return res.status(500).json({
+      error: 'Error al crear habitación',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * Actualizar una habitación
+ * PUT /api/habitaciones/:id
+ */
+const updateHabitacion = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { numero, piso, tipoHabitacionId, estado } = req.body;
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+
+    console.log(`📥 Actualizando habitación ID ${id}:`, {
+      numero,
+      piso,
+      tipoHabitacionId,
+      estado
+    });
+
+    // Verificar que existe
+    const habitacionExistente = await prisma.habitacion.findUnique({
+      where: { id }
+    });
+
+    if (!habitacionExistente) {
+      return res.status(404).json({ error: 'Habitación no encontrada' });
+    }
+
+    // Si cambia el número, verificar que no exista otro con ese número
+    if (numero && numero !== habitacionExistente.numero) {
+      const numeroExiste = await prisma.habitacion.findUnique({
+        where: { numero }
+      });
+
+      if (numeroExiste) {
+        return res.status(409).json({
+          error: `Ya existe una habitación con el número ${numero}`
+        });
+      }
+    }
+
+    // Preparar datos de actualización
+    const dataToUpdate = {};
+    if (numero) dataToUpdate.numero = numero;
+    if (piso) dataToUpdate.piso = parseInt(piso);
+    if (tipoHabitacionId) dataToUpdate.tipoHabitacionId = parseInt(tipoHabitacionId);
+    if (estado) dataToUpdate.estado = estado;
+
+    // Actualizar
+    const habitacionActualizada = await prisma.habitacion.update({
+      where: { id },
+      data: dataToUpdate,
+      select: {
+        id: true,
+        numero: true,
+        piso: true,
+        estado: true,
+        tipoHabitacion: {
+          select: {
+            id: true,
+            nombre: true
+          }
+        }
+      }
+    });
+
+    console.log(`✅ Habitación ID ${id} actualizada exitosamente`);
+
+    return res.status(200).json({
+      message: 'Habitación actualizada exitosamente',
+      data: habitacionActualizada
+    });
+
+  } catch (error) {
+    console.error('❌ Error al actualizar habitación:', error);
+    return res.status(500).json({
+      error: 'Error al actualizar habitación',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * Eliminar una habitación
+ * DELETE /api/habitaciones/:id
+ */
+const deleteHabitacion = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+
+    console.log(`🗑️ Intentando eliminar habitación ID ${id}...`);
+
+    // Verificar que existe
+    const habitacionExistente = await prisma.habitacion.findUnique({
+      where: { id },
+      include: {
+        reservas: {
+          where: {
+            reserva: {
+              estado: { in: ['Pendiente', 'Confirmada', 'CheckIn'] }
+            }
+          }
+        }
+      }
+    });
+
+    if (!habitacionExistente) {
+      return res.status(404).json({ error: 'Habitación no encontrada' });
+    }
+
+    // Verificar que no tenga reservas activas
+    if (habitacionExistente.reservas.length > 0) {
+      console.log(`❌ Habitación ${habitacionExistente.numero} tiene reservas activas`);
+      return res.status(409).json({
+        error: 'No se puede eliminar la habitación porque tiene reservas activas',
+        reservasActivas: habitacionExistente.reservas.length
+      });
+    }
+
+    // Eliminar habitación
+    await prisma.habitacion.delete({
+      where: { id }
+    });
+
+    console.log(`✅ Habitación ${habitacionExistente.numero} eliminada exitosamente`);
+
+    return res.status(200).json({
+      message: 'Habitación eliminada exitosamente',
+      numero: habitacionExistente.numero
+    });
+
+  } catch (error) {
+    console.error('❌ Error al eliminar habitación:', error);
+    return res.status(500).json({
+      error: 'Error al eliminar habitación',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
 module.exports = {
   getAllHabitaciones,
   getHabitacionesKpis,
   getHabitacionById,
+  getHabitacionesByTipo,  // ✅ NUEVO
+  createHabitacion,        // ✅ NUEVO
+  updateHabitacion,        // ✅ NUEVO
+  deleteHabitacion,        // ✅ NUEVO
   updateHabitacionEstado,
   bloquearHabitacion,
   getAllBloqueos,

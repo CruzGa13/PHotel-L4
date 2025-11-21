@@ -15,10 +15,10 @@
   color: #1f2937;
 }
 
-/* Grid de filtros - 2 columnas lado a lado */
+/* Grid de filtros - 3 columnas lado a lado */
 .filtro-mapa-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
   margin-bottom: 20px;
 }

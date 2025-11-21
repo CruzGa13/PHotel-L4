@@ -172,23 +172,40 @@ export default function MensajesOp() {
   const handleSincronizar = async () => {
     setSincronizando(true);
     
-    const resultado = await emailService.sincronizarEmails();
-    
-    if (resultado.success) {
-      await cargarMensajes();
-      const newCount = resultado.data?.newEmails || 0;
-      toast.success(`🎉 Sincronización exitosa: ${newCount} email(s) nuevo(s)`, {
-        duration: 4000,
-        icon: '✅'
-      });
-    } else {
-      toast.error(`Error al sincronizar: ${resultado.error}`, {
+    try {
+      const resultado = await emailService.sincronizarEmails();
+      
+      if (resultado.success) {
+        await cargarMensajes();
+        const newCount = resultado.data?.newEmails || 0;
+        
+        if (newCount > 0) {
+          toast.success(`🎉 ${newCount} email(s) nuevo(s) sincronizado(s)`, {
+            duration: 4000,
+            icon: '✅'
+          });
+        } else {
+          toast.success('✅ No hay emails nuevos', {
+            duration: 3000,
+            icon: 'ℹ️'
+          });
+        }
+      } else {
+        // Mensaje de error más amigable
+        toast.error('⚠️ No se pudo completar la sincronización. Algunos emails pueden tener formato incompatible.', {
+          duration: 5000,
+          icon: '⚠️'
+        });
+      }
+    } catch (error) {
+      console.error('[MensajesOp] Error en sincronización:', error);
+      toast.error('❌ Error de conexión al sincronizar. Por favor, intenta nuevamente.', {
         duration: 5000,
         icon: '❌'
       });
+    } finally {
+      setSincronizando(false);
     }
-    
-    setSincronizando(false);
   };
 
   // Helper para formato de tiempo relativo

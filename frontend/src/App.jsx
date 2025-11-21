@@ -23,8 +23,13 @@ import ScrollToTopOffset from "./ScrollToTopOffset";
 import { FaBars } from "react-icons/fa";
 import "./index.css";
 
-// Lazy loading para páginas de operador
+// Lazy loading para páginas de operador y administrador
 const MensajesOp = lazy(() => import("./pages/MensajesOp/MensajesOp"));
+const OperadoresPage = lazy(() => import("./pages/OperadoresPage/OperadoresPage"));
+const TiposHabitacionPage = lazy(() => import("./pages/TiposHabitacionPage/TiposHabitacionPage"));
+const EditarTipoHabitacion = lazy(() => import("./pages/EditarTipoHabitacion/EditarTipoHabitacion"));
+const NuevoTipoHabitacion = lazy(() => import("./pages/NuevoTipoHabitacion/NuevoTipoHabitacion"));
+const AdminConsultasPage = lazy(() => import("./pages/AdminConsultasPage/AdminConsultasPage"));
 
 const AppLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -68,8 +73,14 @@ const AppLayout = () => {
       setActiveItem("reserva-op");
     } else if (path.includes("/mensajes-op")) {
       setActiveItem("mensajes-op");
+    } else if (path.includes("/operadores-op")) {
+      setActiveItem("operadores-op");
     } else if (path.includes("/mapa-habitaciones")) {
       setActiveItem("mapa-habitaciones");
+    } else if (path.includes("/crud-habitaciones")) {
+      setActiveItem("crud-habitaciones");
+    } else if (path.includes("/admin/consultas-graficos")) {
+      setActiveItem("admin-consultas");
     } else if (path.includes("/movimiento")) {
       setActiveItem("movimiento");
     }
@@ -83,10 +94,15 @@ const AppLayout = () => {
     location.pathname === '/resumen-reserva' ||       // Pre-reserva
     location.pathname === '/reserva-confirmada' ||    // Confirmación
     location.pathname === '/mensajes-op' ||           // Mensajes operador
+    location.pathname === '/operadores-op' ||         // Operadores
     location.pathname === '/habitaciones-op' ||       // Habitaciones operador
     location.pathname.startsWith('/habitaciones-op/') || // Detalle habitación operador
     location.pathname === '/reserva-op' ||            // Reservas operador
-    location.pathname === '/mapa-habitaciones';       // Mapa habitaciones
+    location.pathname === '/mapa-habitaciones' ||     // Mapa habitaciones
+    location.pathname === '/crud-habitaciones' ||             // Tipos de habitación
+    location.pathname.startsWith('/crud-habitaciones/editar/') || // Editar tipo de habitación
+    location.pathname === '/crud-habitaciones/nuevo' ||       // Nuevo tipo de habitación
+    location.pathname === '/admin/consultas-graficos';        // Consultas y gráficos admin
 
   return (
     <>
@@ -183,26 +199,36 @@ const AppLayout = () => {
           <Route path="/habitaciones-op/:id" element={<DetalleHabitaciones />} />
           <Route path="/mapa-habitaciones" element={<MapaHabitaciones />} />
           <Route path="/reserva-op" element={<ReservaOp />} />
-          {/* 🔹 Ruta para mensajes con lazy loading */}
-          <Route 
-            path="/mensajes-op" 
-            element={
-              <Suspense fallback={
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  minHeight: '400px',
-                  fontSize: '18px',
-                  color: '#6b7280'
-                }}>
-                  ⏳ Cargando...
-                </div>
-              }>
-                <MensajesOp />
-              </Suspense>
-            } 
-          />
+          <Route path="/mensajes-op" element={
+            <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', fontSize: '18px', color: '#6b7280' }}>Cargando...</div>}>
+              <MensajesOp />
+            </Suspense>
+          } />
+          <Route path="/operadores-op" element={
+            <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', fontSize: '18px', color: '#6b7280' }}>Cargando...</div>}>
+              <OperadoresPage />
+            </Suspense>
+          } />
+          <Route path="/crud-habitaciones" element={
+            <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', fontSize: '18px', color: '#6b7280' }}>Cargando...</div>}>
+              <TiposHabitacionPage />
+            </Suspense>
+          } />
+          <Route path="/crud-habitaciones/editar/:id" element={
+            <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', fontSize: '18px', color: '#6b7280' }}>Cargando...</div>}>
+              <EditarTipoHabitacion />
+            </Suspense>
+          } />
+          <Route path="/crud-habitaciones/nuevo" element={
+            <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', fontSize: '18px', color: '#6b7280' }}>Cargando...</div>}>
+              <NuevoTipoHabitacion />
+            </Suspense>
+          } />
+          <Route path="/admin/consultas-graficos" element={
+            <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', fontSize: '18px', color: '#6b7280' }}>Cargando...</div>}>
+              <AdminConsultasPage />
+            </Suspense>
+          } />
         </Routes>
       </main>
 

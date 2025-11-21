@@ -235,28 +235,12 @@ export default function DetalleMensaje({ mensaje, onClose, onMarcarRespondido })
           </div>
 
           {/* Metadatos */}
-          <div className={styles.grid3}>
+          <div className={styles.grid2}>
             <div className={styles.field}>
               <label>Canal</label>
               <p>
                 <span className={styles.canalBadge}>
                   {getCanalIcon(mensaje.canal)} {mensaje.canal}
-                </span>
-              </p>
-            </div>
-            <div className={styles.field}>
-              <label>Prioridad</label>
-              <p>
-                <span
-                  className={`${styles.prioridadBadge} ${
-                    mensaje.prioridad === 'Alta'
-                      ? styles.prioridadAlta
-                      : mensaje.prioridad === 'Media'
-                      ? styles.prioridadMedia
-                      : styles.prioridadBaja
-                  }`}
-                >
-                  {mensaje.prioridad}
                 </span>
               </p>
             </div>

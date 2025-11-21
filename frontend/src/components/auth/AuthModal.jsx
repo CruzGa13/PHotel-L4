@@ -40,22 +40,25 @@ const registerSchema = z
     apellido: z
       .string()
       .min(2, { message: "El apellido debe tener al menos 2 caracteres" }),
-    birthDate: z.coerce
-      .date()
-      .min(new Date("1900-01-01"), { message: "Fecha demasiado antigua" })
-      .max(
-        new Date(new Date().setFullYear(new Date().getFullYear() - 16)),
+    birthDate: z
+      .string({ required_error: "Ingresá tu fecha de nacimiento" })
+      .min(1, { message: "Ingresá tu fecha de nacimiento" })
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: "Ingresá una fecha válida"
+      })
+      .refine((val) => new Date(val) >= new Date("1900-01-01"), {
+        message: "Fecha demasiado antigua"
+      })
+      .refine(
+        (val) => new Date(val) <= new Date(new Date().setFullYear(new Date().getFullYear() - 16)),
         { message: "Debes ser mayor de 16 años" }
       ),
     genero: z
-      .enum([
-        "Femenino",
-        "Masculino",
-        "NoBinario",
-        "PrefieroNoDecir",
-        "Otro",
-      ])
-      .optional(),
+      .string()
+      .optional()
+      .refine((val) => !val || val === "" || ["Femenino", "Masculino", "Otro"].includes(val), {
+        message: "Seleccioná una opción válida"
+      }),
     email: z
       .string()
       .min(1, { message: "El correo electrónico es requerido" })
@@ -162,6 +165,11 @@ const AuthModal = ({ open, onOpenChange }) => {
         setTimeout(() => {
           navigate('/habitaciones-op');
         }, 500);
+      } else if (rolNombre === 'administrador') {
+        // Redirigir a consultas y gráficos para administradores
+        setTimeout(() => {
+          navigate('/admin/consultas-graficos');
+        }, 500);
       }
       // Si es cliente, no redirigir (dejar en la página actual)
       
@@ -219,7 +227,7 @@ const onSubmitRegister = async (data) => {
       onOpenChange(false);
 
       // Mostrar mensaje de bienvenida
-      toast.success('¡Bienvenido a PHotel! Tu cuenta ha sido creada.', {
+      toast.success('¡Bienvenido al Hotel Ríos de Agua Viva! Tu cuenta ha sido creada.', {
         duration: 4000,
         position: 'top-center',
       });
@@ -232,12 +240,13 @@ const onSubmitRegister = async (data) => {
         setTimeout(() => {
           navigate('/habitaciones-op');
         }, 500);
-      } else {
-        // Redirigir a inicio para clientes
+      } else if (rolNombre === 'administrador') {
+        // Redirigir a consultas y gráficos para administradores
         setTimeout(() => {
-          navigate('/inicio');
+          navigate('/admin/consultas-graficos');
         }, 500);
       }
+      // Si es cliente, no redirigir (dejar en la página actual para continuar con la reserva)
 
     } catch (err) {
       console.error('Error en registro:', err);
@@ -434,10 +443,8 @@ const onSubmitRegister = async (data) => {
                   className={`input-brand flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background ${registerForm.formState.errors.genero ? "border-red-500" : ""}`}
                 >
                   <option value="">Seleccionar...</option>
-                  <option value="Femenino">Femenino</option>
                   <option value="Masculino">Masculino</option>
-                  <option value="NoBinario">No binario</option>
-                  <option value="PrefieroNoDecir">Prefiero no decir</option>
+                  <option value="Femenino">Femenino</option>
                   <option value="Otro">Otro</option>
                 </select>
                 {registerForm.formState.errors.genero && (

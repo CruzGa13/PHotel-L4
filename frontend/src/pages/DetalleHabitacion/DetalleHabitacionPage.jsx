@@ -161,7 +161,7 @@ export default function DetalleHabitacionPage() {
           mode="controlled"
           items={[
             { label: "Inicio", to: "/" },
-            { label: "Nuestras habitaciones", to: "/habitaciones" },
+            { label: "Reserva", to: "/reserva" },
             { label: tipoHabitacion.nombre, current: true }
           ]} 
         />

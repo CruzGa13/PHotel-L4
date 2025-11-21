@@ -1,0 +1,818 @@
+import { useState, useMemo, useRef } from 'react';
+import { FaChartBar, FaChartLine, FaChartPie, FaFilter, FaEraser, FaSearch, FaCalendarAlt, FaFilePdf } from 'react-icons/fa';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar, Line, Doughnut } from 'react-chartjs-2';
+import toast from 'react-hot-toast';
+import styles from './AdminConsultasPage.module.css';
+
+// Registrar componentes de Chart.js
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend);
+
+// ========================================
+// DATOS MOCK (TODO: reemplazar por API real)
+// ========================================
+
+const tiposHabitacionMock = [
+  { id: 1, nombre: 'Estándar Doble' },
+  { id: 2, nombre: 'Suite Familiar' },
+  { id: 3, nombre: 'Suite Presidencial' },
+  { id: 4, nombre: 'Habitación Simple' },
+];
+
+const operadoresMock = [
+  { id: 'op1', nombre: 'Ana', apellido: 'García', rol: 'Administrador' },
+  { id: 'op2', nombre: 'Carlos', apellido: 'Rodríguez', rol: 'Operador' },
+  { id: 'op3', nombre: 'María', apellido: 'López', rol: 'Operador' },
+];
+
+const reservasMock = [
+  {
+    id: 1,
+    fechaIngreso: '2025-03-10',
+    fechaEgreso: '2025-03-12',
+    estado: 'Confirmada',
+    totalFinal: 90000,
+    cliente: { id: 'cli1', nombre: 'Juan', apellido: 'Pérez', email: 'juan@example.com' },
+    operador: { id: 'op1', nombre: 'Ana', apellido: 'García' },
+    tipoHabitaciones: [{ id: 1, nombre: 'Estándar Doble' }],
+    metodoPago: 'Tarjeta',
+  },
+  {
+    id: 2,
+    fechaIngreso: '2025-03-15',
+    fechaEgreso: '2025-03-18',
+    estado: 'CheckIn',
+    totalFinal: 150000,
+    cliente: { id: 'cli2', nombre: 'María', apellido: 'González', email: 'maria@example.com' },
+    operador: { id: 'op2', nombre: 'Carlos', apellido: 'Rodríguez' },
+    tipoHabitaciones: [{ id: 2, nombre: 'Suite Familiar' }],
+    metodoPago: 'Efectivo',
+  },
+  {
+    id: 3,
+    fechaIngreso: '2025-03-08',
+    fechaEgreso: '2025-03-10',
+    estado: 'CheckOut',
+    totalFinal: 75000,
+    cliente: { id: 'cli3', nombre: 'Pedro', apellido: 'Martínez', email: 'pedro@example.com' },
+    operador: { id: 'op3', nombre: 'María', apellido: 'López' },
+    tipoHabitaciones: [{ id: 4, nombre: 'Habitación Simple' }],
+    metodoPago: 'Transferencia',
+  },
+  {
+    id: 4,
+    fechaIngreso: '2025-03-20',
+    fechaEgreso: '2025-03-25',
+    estado: 'Confirmada',
+    totalFinal: 250000,
+    cliente: { id: 'cli4', nombre: 'Laura', apellido: 'Fernández', email: 'laura@example.com' },
+    operador: { id: 'op1', nombre: 'Ana', apellido: 'García' },
+    tipoHabitaciones: [{ id: 3, nombre: 'Suite Presidencial' }],
+    metodoPago: 'Tarjeta',
+  },
+  {
+    id: 5,
+    fechaIngreso: '2025-03-12',
+    fechaEgreso: '2025-03-14',
+    estado: 'Cancelada',
+    totalFinal: 0,
+    cliente: { id: 'cli5', nombre: 'Roberto', apellido: 'Silva', email: 'roberto@example.com' },
+    operador: { id: 'op2', nombre: 'Carlos', apellido: 'Rodríguez' },
+    tipoHabitaciones: [{ id: 1, nombre: 'Estándar Doble' }],
+    metodoPago: 'Efectivo',
+  },
+  {
+    id: 6,
+    fechaIngreso: '2025-03-22',
+    fechaEgreso: '2025-03-24',
+    estado: 'Pendiente',
+    totalFinal: 95000,
+    cliente: { id: 'cli6', nombre: 'Sofía', apellido: 'Ramírez', email: 'sofia@example.com' },
+    operador: { id: 'op3', nombre: 'María', apellido: 'López' },
+    tipoHabitaciones: [{ id: 1, nombre: 'Estándar Doble' }],
+    metodoPago: 'Tarjeta',
+  },
+  {
+    id: 7,
+    fechaIngreso: '2025-03-18',
+    fechaEgreso: '2025-03-21',
+    estado: 'Confirmada',
+    totalFinal: 180000,
+    cliente: { id: 'cli7', nombre: 'Diego', apellido: 'Torres', email: 'diego@example.com' },
+    operador: { id: 'op1', nombre: 'Ana', apellido: 'García' },
+    tipoHabitaciones: [{ id: 2, nombre: 'Suite Familiar' }],
+    metodoPago: 'Transferencia',
+  },
+  {
+    id: 8,
+    fechaIngreso: '2025-03-25',
+    fechaEgreso: '2025-03-28',
+    estado: 'CheckIn',
+    totalFinal: 135000,
+    cliente: { id: 'cli8', nombre: 'Valentina', apellido: 'Morales', email: 'valentina@example.com' },
+    operador: { id: 'op2', nombre: 'Carlos', apellido: 'Rodríguez' },
+    tipoHabitaciones: [{ id: 1, nombre: 'Estándar Doble' }],
+    metodoPago: 'Tarjeta',
+  },
+];
+
+// ========================================
+// COMPONENTE PRINCIPAL
+// ========================================
+
+export default function AdminConsultasPage() {
+  // Referencias para los gráficos
+  const graficoBarrasRef = useRef(null);
+  const graficoLineasRef = useRef(null);
+  const graficoDonaRef = useRef(null);
+
+  // Estados para filtros globales
+  const [filtros, setFiltros] = useState({
+    fechaDesde: '2025-03-01',
+    fechaHasta: '2025-03-31',
+    tipoHabitacion: 'Todos',
+    estadoReserva: 'Todos',
+    operador: 'Todos',
+  });
+
+  // Estados para tabla
+  const [busquedaCliente, setBusquedaCliente] = useState('');
+  const [metodoPago, setMetodoPago] = useState('Todos');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 10;
+
+  // Estado para loading del PDF
+  const [generandoPDF, setGenerandoPDF] = useState(false);
+
+  // Limpiar filtros
+  const limpiarFiltros = () => {
+    setFiltros({
+      fechaDesde: '2025-03-01',
+      fechaHasta: '2025-03-31',
+      tipoHabitacion: 'Todos',
+      estadoReserva: 'Todos',
+      operador: 'Todos',
+    });
+    setBusquedaCliente('');
+    setMetodoPago('Todos');
+    setPaginaActual(1);
+  };
+
+  // Filtrar reservas según todos los criterios
+  const reservasFiltradas = useMemo(() => {
+    return reservasMock.filter((reserva) => {
+      // Filtro por rango de fechas
+      const fechaIngreso = new Date(reserva.fechaIngreso);
+      const desde = new Date(filtros.fechaDesde);
+      const hasta = new Date(filtros.fechaHasta);
+      if (fechaIngreso < desde || fechaIngreso > hasta) return false;
+
+      // Filtro por tipo de habitación
+      if (filtros.tipoHabitacion !== 'Todos') {
+        const tieneHabitacion = reserva.tipoHabitaciones.some(
+          (th) => th.nombre === filtros.tipoHabitacion
+        );
+        if (!tieneHabitacion) return false;
+      }
+
+      // Filtro por estado
+      if (filtros.estadoReserva !== 'Todos' && reserva.estado !== filtros.estadoReserva) {
+        return false;
+      }
+
+      // Filtro por operador
+      if (filtros.operador !== 'Todos' && reserva.operador.id !== filtros.operador) {
+        return false;
+      }
+
+      // Filtro por búsqueda de cliente
+      if (busquedaCliente) {
+        const nombreCompleto = `${reserva.cliente.nombre} ${reserva.cliente.apellido}`.toLowerCase();
+        const email = reserva.cliente.email.toLowerCase();
+        const busqueda = busquedaCliente.toLowerCase();
+        if (!nombreCompleto.includes(busqueda) && !email.includes(busqueda)) {
+          return false;
+        }
+      }
+
+      // Filtro por método de pago
+      if (metodoPago !== 'Todos' && reserva.metodoPago !== metodoPago) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [filtros, busquedaCliente, metodoPago]);
+
+  // ========================================
+  // CÁLCULO DE KPIs
+  // ========================================
+
+  const kpis = useMemo(() => {
+    const totalReservas = reservasFiltradas.length;
+    const reservasCanceladas = reservasFiltradas.filter((r) => r.estado === 'Cancelada').length;
+    const ingresosTotales = reservasFiltradas.reduce((sum, r) => sum + r.totalFinal, 0);
+    
+    // Ocupación promedio (simulado: asumimos 20 habitaciones totales)
+    const habitacionesTotales = 20;
+    const diasPeriodo = Math.ceil(
+      (new Date(filtros.fechaHasta) - new Date(filtros.fechaDesde)) / (1000 * 60 * 60 * 24)
+    );
+    const reservasActivas = reservasFiltradas.filter(
+      (r) => r.estado !== 'Cancelada' && r.estado !== 'Pendiente'
+    ).length;
+    const ocupacionPromedio = diasPeriodo > 0 
+      ? ((reservasActivas / habitacionesTotales) * 100).toFixed(1)
+      : 0;
+
+    const tasaCancelacion = totalReservas > 0 
+      ? ((reservasCanceladas / totalReservas) * 100).toFixed(1)
+      : 0;
+
+    return {
+      ocupacionPromedio,
+      ingresosTotales,
+      totalReservas,
+      tasaCancelacion,
+    };
+  }, [reservasFiltradas, filtros]);
+
+  // ========================================
+  // DATOS PARA GRÁFICOS
+  // ========================================
+
+  // Gráfico de barras: Reservas por tipo de habitación
+  const datosBarras = useMemo(() => {
+    const conteo = {};
+    tiposHabitacionMock.forEach((tipo) => {
+      conteo[tipo.nombre] = 0;
+    });
+
+    reservasFiltradas.forEach((reserva) => {
+      reserva.tipoHabitaciones.forEach((th) => {
+        if (conteo[th.nombre] !== undefined) {
+          conteo[th.nombre]++;
+        }
+      });
+    });
+
+    return {
+      labels: Object.keys(conteo),
+      datasets: [
+        {
+          label: 'Cantidad de Reservas',
+          data: Object.values(conteo),
+          backgroundColor: 'rgba(147, 51, 234, 0.7)',
+          borderColor: 'rgba(147, 51, 234, 1)',
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [reservasFiltradas]);
+
+  // Gráfico de líneas: Ingresos por día
+  const datosLineas = useMemo(() => {
+    const ingresosPorDia = {};
+    
+    reservasFiltradas.forEach((reserva) => {
+      const fecha = reserva.fechaIngreso;
+      if (!ingresosPorDia[fecha]) {
+        ingresosPorDia[fecha] = 0;
+      }
+      ingresosPorDia[fecha] += reserva.totalFinal;
+    });
+
+    const fechasOrdenadas = Object.keys(ingresosPorDia).sort();
+
+    return {
+      labels: fechasOrdenadas.map((f) => new Date(f).toLocaleDateString('es-AR')),
+      datasets: [
+        {
+          label: 'Ingresos ($)',
+          data: fechasOrdenadas.map((f) => ingresosPorDia[f]),
+          borderColor: 'rgba(147, 51, 234, 1)',
+          backgroundColor: 'rgba(147, 51, 234, 0.1)',
+          tension: 0.4,
+          fill: true,
+        },
+      ],
+    };
+  }, [reservasFiltradas]);
+
+  // Gráfico de dona: Estados de reservas
+  const datosDona = useMemo(() => {
+    const conteoEstados = {};
+    
+    reservasFiltradas.forEach((reserva) => {
+      if (!conteoEstados[reserva.estado]) {
+        conteoEstados[reserva.estado] = 0;
+      }
+      conteoEstados[reserva.estado]++;
+    });
+
+    return {
+      labels: Object.keys(conteoEstados),
+      datasets: [
+        {
+          data: Object.values(conteoEstados),
+          backgroundColor: [
+            'rgba(147, 51, 234, 0.8)',
+            'rgba(192, 38, 211, 0.8)',
+            'rgba(126, 34, 206, 0.8)',
+            'rgba(107, 33, 168, 0.8)',
+            'rgba(88, 28, 135, 0.8)',
+            'rgba(76, 29, 149, 0.8)',
+          ],
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [reservasFiltradas]);
+
+  // ========================================
+  // PAGINACIÓN
+  // ========================================
+
+  const indiceInicio = (paginaActual - 1) * itemsPorPagina;
+  const indiceFin = indiceInicio + itemsPorPagina;
+  const reservasPaginadas = reservasFiltradas.slice(indiceInicio, indiceFin);
+  const totalPaginas = Math.ceil(reservasFiltradas.length / itemsPorPagina);
+
+  // ========================================
+  // EXPORTAR PDF
+  // ========================================
+
+  const exportarPDF = async () => {
+    setGenerandoPDF(true);
+    
+    try {
+      // 1. Obtener imágenes base64 de los gráficos
+      const graficos = {};
+      
+      if (graficoBarrasRef.current) {
+        const base64 = graficoBarrasRef.current.toBase64Image();
+        graficos.reservasPorTipo = base64.replace(/^data:image\/png;base64,/, '');
+      }
+      
+      if (graficoLineasRef.current) {
+        const base64 = graficoLineasRef.current.toBase64Image();
+        graficos.ingresosPorDia = base64.replace(/^data:image\/png;base64,/, '');
+      }
+      
+      if (graficoDonaRef.current) {
+        const base64 = graficoDonaRef.current.toBase64Image();
+        graficos.estadosReserva = base64.replace(/^data:image\/png;base64,/, '');
+      }
+
+      // 2. Preparar datos para enviar
+      const payload = {
+        filtros: {
+          fechaDesde: filtros.fechaDesde,
+          fechaHasta: filtros.fechaHasta,
+          tipoHabitacion: filtros.tipoHabitacion,
+          estadoReserva: filtros.estadoReserva,
+          operador: filtros.operador,
+          busquedaCliente,
+          metodoPago,
+        },
+        kpis: {
+          ocupacionPromedio: kpis.ocupacionPromedio,
+          ingresosTotales: kpis.ingresosTotales,
+          totalReservas: kpis.totalReservas,
+          tasaCancelacion: kpis.tasaCancelacion,
+        },
+        reservas: reservasFiltradas.map((r) => ({
+          id: r.id,
+          fechaIngreso: r.fechaIngreso,
+          fechaEgreso: r.fechaEgreso,
+          estado: r.estado,
+          totalFinal: r.totalFinal,
+          cliente: {
+            nombre: r.cliente.nombre,
+            apellido: r.cliente.apellido,
+            email: r.cliente.email,
+          },
+          operador: {
+            nombre: r.operador.nombre,
+            apellido: r.operador.apellido,
+          },
+          tipoHabitaciones: r.tipoHabitaciones.map((th) => th.nombre),
+          metodoPago: r.metodoPago,
+        })),
+        graficos,
+      };
+
+      // 3. Hacer POST al backend
+      const response = await fetch('http://localhost:3000/api/reportes/reservas/pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al generar el PDF');
+      }
+
+      // 4. Descargar el PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `reporte-reservas-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.success('PDF generado exitosamente', {
+        duration: 3000,
+        style: {
+          background: '#d1fae5',
+          color: '#065f46',
+        },
+      });
+    } catch (error) {
+      console.error('Error al exportar PDF:', error);
+      toast.error('Error al generar el PDF', {
+        duration: 3000,
+        style: {
+          background: '#fee2e2',
+          color: '#991b1b',
+        },
+      });
+    } finally {
+      setGenerandoPDF(false);
+    }
+  };
+
+  // ========================================
+  // RENDER
+  // ========================================
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.containerMain}>
+        {/* Breadcrumb */}
+        <div className={styles.breadcrumb}>
+          <span>Panel de Administrador</span>
+          <span className={styles.sep}>/</span>
+          <span className={styles.pink}>Consultas y Gráficos</span>
+        </div>
+
+        {/* Cabecera */}
+        <div className={styles.headTop}>
+          <div>
+            <h2>
+              <span className={styles.gradientText}>Consultas y Gráficos</span>
+            </h2>
+            <p className={styles.muted}>
+              Análisis parametrizado de reservas, ingresos y ocupación del hotel
+            </p>
+          </div>
+        </div>
+
+        {/* ========================================
+            FILTROS GLOBALES
+            ======================================== */}
+        <div className={styles.filtrosCard}>
+          <div className={styles.filtrosHeader}>
+            <FaFilter className={styles.filtroIcon} />
+            <h3>Filtros de Consulta</h3>
+          </div>
+
+          <div className={styles.filtrosGrid}>
+            {/* Fecha Desde */}
+            <div className={styles.formGroup}>
+              <label>
+                <FaCalendarAlt /> Fecha Desde <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="date"
+                value={filtros.fechaDesde}
+                onChange={(e) => setFiltros({ ...filtros, fechaDesde: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+
+            {/* Fecha Hasta */}
+            <div className={styles.formGroup}>
+              <label>
+                <FaCalendarAlt /> Fecha Hasta <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="date"
+                value={filtros.fechaHasta}
+                onChange={(e) => setFiltros({ ...filtros, fechaHasta: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+
+            {/* Tipo de Habitación */}
+            <div className={styles.formGroup}>
+              <label>Tipo de Habitación</label>
+              <select
+                value={filtros.tipoHabitacion}
+                onChange={(e) => setFiltros({ ...filtros, tipoHabitacion: e.target.value })}
+                className={styles.select}
+              >
+                <option value="Todos">Todos</option>
+                {tiposHabitacionMock.map((tipo) => (
+                  <option key={tipo.id} value={tipo.nombre}>
+                    {tipo.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Estado de Reserva */}
+            <div className={styles.formGroup}>
+              <label>Estado de Reserva</label>
+              <select
+                value={filtros.estadoReserva}
+                onChange={(e) => setFiltros({ ...filtros, estadoReserva: e.target.value })}
+                className={styles.select}
+              >
+                <option value="Todos">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Confirmada">Confirmada</option>
+                <option value="CheckIn">Check-In</option>
+                <option value="CheckOut">Check-Out</option>
+                <option value="Cancelada">Cancelada</option>
+              </select>
+            </div>
+
+            {/* Operador */}
+            <div className={styles.formGroup}>
+              <label>Operador/Administrador</label>
+              <select
+                value={filtros.operador}
+                onChange={(e) => setFiltros({ ...filtros, operador: e.target.value })}
+                className={styles.select}
+              >
+                <option value="Todos">Todos</option>
+                {operadoresMock.map((op) => (
+                  <option key={op.id} value={op.id}>
+                    {op.nombre} {op.apellido} ({op.rol})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Botón Limpiar */}
+            <div className={styles.formGroup}>
+              <label>&nbsp;</label>
+              <button onClick={limpiarFiltros} className={styles.btnLimpiar}>
+                <FaEraser /> Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================
+            KPIs (CARDS)
+            ======================================== */}
+        <div className={styles.kpisGrid}>
+          <div className={styles.kpiCard}>
+            <div className={styles.kpiIcon} style={{ background: 'linear-gradient(135deg, #9333ea, #7e22ce)' }}>
+              <FaChartBar />
+            </div>
+            <div className={styles.kpiContent}>
+              <p className={styles.kpiLabel}>Ocupación Promedio</p>
+              <h3 className={styles.kpiValue}>{kpis.ocupacionPromedio}%</h3>
+            </div>
+          </div>
+
+          <div className={styles.kpiCard}>
+            <div className={styles.kpiIcon} style={{ background: 'linear-gradient(135deg, #c026d3, #a21caf)' }}>
+              <FaChartLine />
+            </div>
+            <div className={styles.kpiContent}>
+              <p className={styles.kpiLabel}>Ingresos del Período</p>
+              <h3 className={styles.kpiValue}>
+                ${kpis.ingresosTotales.toLocaleString('es-AR')}
+              </h3>
+            </div>
+          </div>
+
+          <div className={styles.kpiCard}>
+            <div className={styles.kpiIcon} style={{ background: 'linear-gradient(135deg, #7e22ce, #6b21a8)' }}>
+              <FaChartPie />
+            </div>
+            <div className={styles.kpiContent}>
+              <p className={styles.kpiLabel}>Total de Reservas</p>
+              <h3 className={styles.kpiValue}>{kpis.totalReservas}</h3>
+            </div>
+          </div>
+
+          <div className={styles.kpiCard}>
+            <div className={styles.kpiIcon} style={{ background: 'linear-gradient(135deg, #a21caf, #86198f)' }}>
+              <FaChartBar />
+            </div>
+            <div className={styles.kpiContent}>
+              <p className={styles.kpiLabel}>Tasa de Cancelación</p>
+              <h3 className={styles.kpiValue}>{kpis.tasaCancelacion}%</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================
+            GRÁFICOS
+            ======================================== */}
+        <div className={styles.graficosGrid}>
+          {/* Gráfico de Barras */}
+          <div className={styles.graficoCard}>
+            <h3 className={styles.graficoTitulo}>
+              <FaChartBar /> Reservas por Tipo de Habitación
+            </h3>
+            <div className={styles.graficoContainer}>
+              <Bar
+                ref={graficoBarrasRef}
+                data={datosBarras}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false },
+                    title: { display: false },
+                  },
+                  scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Gráfico de Líneas */}
+          <div className={styles.graficoCard}>
+            <h3 className={styles.graficoTitulo}>
+              <FaChartLine /> Ingresos por Día
+            </h3>
+            <div className={styles.graficoContainer}>
+              <Line
+                ref={graficoLineasRef}
+                data={datosLineas}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false },
+                    title: { display: false },
+                  },
+                  scales: {
+                    y: { beginAtZero: true },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Gráfico de Dona */}
+          <div className={styles.graficoCard}>
+            <h3 className={styles.graficoTitulo}>
+              <FaChartPie /> Estados de Reservas
+            </h3>
+            <div className={styles.graficoContainer}>
+              <Doughnut
+                ref={graficoDonaRef}
+                data={datosDona}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { position: 'bottom' },
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================
+            TABLA DE CONSULTAS PARAMETRIZADAS
+            ======================================== */}
+        <div className={styles.tablaCard}>
+          <div className={styles.tablaHeader}>
+            <h3>Detalle de Reservas</h3>
+            <div className={styles.tablaFiltros}>
+              <button
+                onClick={exportarPDF}
+                disabled={generandoPDF}
+                className={styles.btnExportarPDF}
+              >
+                <FaFilePdf />
+                {generandoPDF ? 'Generando PDF...' : 'Exportar PDF'}
+              </button>
+              <div className={styles.searchBox}>
+                <FaSearch />
+                <input
+                  type="text"
+                  placeholder="Buscar por cliente..."
+                  value={busquedaCliente}
+                  onChange={(e) => {
+                    setBusquedaCliente(e.target.value);
+                    setPaginaActual(1);
+                  }}
+                  className={styles.searchInput}
+                />
+              </div>
+              <select
+                value={metodoPago}
+                onChange={(e) => {
+                  setMetodoPago(e.target.value);
+                  setPaginaActual(1);
+                }}
+                className={styles.selectSmall}
+              >
+                <option value="Todos">Todos los métodos</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Fecha Ingreso</th>
+                  <th>Fecha Egreso</th>
+                  <th>Cliente</th>
+                  <th>Tipo(s) de Habitación</th>
+                  <th>Estado</th>
+                  <th>Operador</th>
+                  <th>Método de Pago</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasPaginadas.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className={styles.noData}>
+                      No se encontraron reservas con los filtros seleccionados
+                    </td>
+                  </tr>
+                ) : (
+                  reservasPaginadas.map((reserva) => (
+                    <tr key={reserva.id}>
+                      <td>{new Date(reserva.fechaIngreso).toLocaleDateString('es-AR')}</td>
+                      <td>{new Date(reserva.fechaEgreso).toLocaleDateString('es-AR')}</td>
+                      <td>
+                        <div className={styles.clienteInfo}>
+                          <strong>
+                            {reserva.cliente.nombre} {reserva.cliente.apellido}
+                          </strong>
+                          <small>{reserva.cliente.email}</small>
+                        </div>
+                      </td>
+                      <td>{reserva.tipoHabitaciones.map((th) => th.nombre).join(', ')}</td>
+                      <td>
+                        <span className={`${styles.badge} ${styles[`badge${reserva.estado}`]}`}>
+                          {reserva.estado}
+                        </span>
+                      </td>
+                      <td>
+                        {reserva.operador.nombre} {reserva.operador.apellido}
+                      </td>
+                      <td>{reserva.metodoPago}</td>
+                      <td className={styles.totalCell}>
+                        ${reserva.totalFinal.toLocaleString('es-AR')}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Paginación */}
+          {totalPaginas > 1 && (
+            <div className={styles.paginacion}>
+              <button
+                onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
+                disabled={paginaActual === 1}
+                className={styles.btnPaginacion}
+              >
+                Anterior
+              </button>
+              <span className={styles.paginaInfo}>
+                Página {paginaActual} de {totalPaginas}
+              </span>
+              <button
+                onClick={() => setPaginaActual((prev) => Math.min(prev + 1, totalPaginas))}
+                disabled={paginaActual === totalPaginas}
+                className={styles.btnPaginacion}
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

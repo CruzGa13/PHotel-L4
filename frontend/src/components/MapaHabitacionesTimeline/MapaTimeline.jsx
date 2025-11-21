@@ -14,11 +14,13 @@ export default function MapaTimeline() {
   const [loading, setLoading] = useState(true);
   const [categorias, setCategorias] = useState([]);
   const timelineRef = useRef(null);
+  const habitacionesColumnRef = useRef(null);
 
   // Estado de filtros
   const [filtros, setFiltros] = useState({
     categoria: '',
-    tipoHabitacion: ''
+    tipoHabitacion: '',
+    numeroHabitacion: ''
   });
 
   // Cargar datos al montar el componente
@@ -188,18 +190,52 @@ export default function MapaTimeline() {
       );
     }
 
+    // Reordenar por número de habitación (mover coincidencias al inicio)
+    if (filtros.numeroHabitacion && filtros.numeroHabitacion.trim()) {
+      const busquedaNumero = filtros.numeroHabitacion;
+      
+      // Separar coincidencias de no coincidencias
+      const coincidencias = resultado.filter(h => 
+        h.numero?.includes(busquedaNumero)
+      );
+      const noCoincidencias = resultado.filter(h => 
+        !h.numero?.includes(busquedaNumero)
+      );
+      
+      // Combinar: primero las coincidencias, luego el resto
+      resultado = [...coincidencias, ...noCoincidencias];
+      
+      if (coincidencias.length > 0) {
+        toast.success(`Se encontraron ${coincidencias.length} habitaciones con "${busquedaNumero}"`, { 
+          position: 'top-center' 
+        });
+        
+        // Hacer scroll automático a la primera coincidencia
+        setTimeout(() => {
+          if (timelineRef.current) {
+            timelineRef.current.scrollTop = 0; // Scroll al inicio donde están las coincidencias
+          }
+        }, 100);
+      } else {
+        toast.error(`No se encontraron habitaciones con "${busquedaNumero}"`, { 
+          position: 'top-center' 
+        });
+      }
+    } else {
+      toast.success(`Mostrando ${resultado.length} habitaciones`, { 
+        position: 'top-center' 
+      });
+    }
+
     setHabitacionesFiltradas(resultado);
-    
-    toast.success(`Se encontraron ${resultado.length} habitaciones`, { 
-      position: 'top-center' 
-    });
   };
 
   // Limpiar filtros
   const limpiarFiltros = () => {
     setFiltros({
       categoria: '',
-      tipoHabitacion: ''
+      tipoHabitacion: '',
+      numeroHabitacion: ''
     });
     setHabitacionesFiltradas(habitaciones);
     toast.success('Filtros limpiados', { position: 'top-center' });

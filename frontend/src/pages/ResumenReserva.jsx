@@ -83,7 +83,7 @@ export default function ResumenReserva() {
   
   const breadcrumbItems = [
     { label: "Inicio", to: "/" },
-    { label: "Nuestras habitaciones", to: "/habitaciones" },
+    { label: "Reserva", to: "/reserva" },
     { label: nombreHabitacion, to: linkDetalle },
     { label: "Pre-reserva", current: true }
   ];

@@ -74,9 +74,10 @@ function drawHorizontalLine(doc, y) {
  * @param {Object} params.reserva - Datos de la reserva
  * @param {Object} params.cliente - Datos del cliente
  * @param {Object} params.tipoHabitacion - Datos del tipo de habitación
+ * @param {Object} params.habitacionAsignada - Datos de la habitación asignada
  * @returns {PDFDocument} - Instancia de PDFDocument para pipear
  */
-function buildInvoicePdfStream({ factura, reserva, cliente, tipoHabitacion }) {
+function buildInvoicePdfStream({ factura, reserva, cliente, tipoHabitacion, habitacionAsignada }) {
   console.log('[PDF] Generando factura:', factura.numeroFactura);
 
   // Crear documento PDF
@@ -235,6 +236,7 @@ function buildInvoicePdfStream({ factura, reserva, cliente, tipoHabitacion }) {
 
   // Datos de la reserva
   const nombreHabitacion = tipoHabitacion?.nombre || 'Habitación estándar';
+  const numeroHabitacion = habitacionAsignada?.numero || null;
   const noches = calculateNights(reserva.fechaIngreso, reserva.fechaEgreso);
   const huespedes = `${reserva.adultos} adulto(s)${reserva.ninios > 0 ? `, ${reserva.ninios} niño(s)` : ''}`;
 
@@ -248,8 +250,15 @@ function buildInvoicePdfStream({ factura, reserva, cliente, tipoHabitacion }) {
     .fontSize(9)
     .fillColor(COLORS.textLight)
     .font('Helvetica')
-    .text(`Reserva #${reserva.id}`, col1 + 5, yPosition + 12)
-    .text(`${noches} noche(s)`, col1 + 5, yPosition + 24);
+    .text(`Reserva #${reserva.id}`, col1 + 5, yPosition + 12);
+  
+  // Mostrar número de habitación si existe
+  if (numeroHabitacion) {
+    doc.text(`Habitación Nº ${numeroHabitacion}`, col1 + 5, yPosition + 24);
+    doc.text(`${noches} noche(s)`, col1 + 5, yPosition + 36);
+  } else {
+    doc.text(`${noches} noche(s)`, col1 + 5, yPosition + 24);
+  }
 
   doc
     .fontSize(9)
@@ -269,7 +278,8 @@ function buildInvoicePdfStream({ factura, reserva, cliente, tipoHabitacion }) {
     .font('Helvetica')
     .text(huespedes, col4 + 5, yPosition + 5, { width: 90 });
 
-  yPosition += 45;
+  // Ajustar yPosition según si se mostró el número de habitación
+  yPosition += numeroHabitacion ? 57 : 45;
 
   // Línea separadora
   drawHorizontalLine(doc, yPosition);
@@ -308,7 +318,7 @@ function buildInvoicePdfStream({ factura, reserva, cliente, tipoHabitacion }) {
     .fontSize(12)
     .fillColor(COLORS.white)
     .font('Helvetica-Bold')
-    .text('TOTAL A PAGAR', doc.page.width - 245, yPosition + 5)
+    .text('TOTAL', doc.page.width - 245, yPosition + 5)
     .fontSize(16)
     .text(formatCurrency(Number(factura.total)), 0, yPosition + 5, {
       width: doc.page.width - 58,

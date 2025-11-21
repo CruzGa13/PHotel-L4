@@ -64,8 +64,10 @@ class ImapService {
           });
 
           if (!existente) {
-            await this.saveEmailToDB(msg);
-            newEmailsCount++;
+            const emailGuardado = await this.saveEmailToDB(msg);
+            if (emailGuardado) {
+              newEmailsCount++;
+            }
           }
         }
 
@@ -96,6 +98,22 @@ class ImapService {
       const cuerpoHtml = parsed.html || null;
       const cuerpoTexto = parsed.text || this.extractPlainText(cuerpoHtml) || '(Sin contenido)';
 
+      // 🚫 FILTRO: Ignorar emails automáticos y notificaciones
+      const dominiosIgnorados = [
+        '@accounts.google.com',
+        '@mail.google.com',
+        '@googlemail.com',
+        '@notifications.microsoft.com',
+        '@facebookmail.com'
+      ];
+      
+      const esEmailIgnorado = dominiosIgnorados.some(dominio => deEmail && deEmail.includes(dominio));
+      
+      if (esEmailIgnorado) {
+        console.log(`⏭️  Email ignorado (automático): ${deEmail} - ${asunto.substring(0, 50)}`);
+        return null; // No guardar este email
+      }
+
       // Detectar prioridad automáticamente
       const prioridad = this.detectPriority(asunto, cuerpoTexto);
 
@@ -107,15 +125,63 @@ class ImapService {
       // Verificar adjuntos
       const tieneAdjuntos = parsed.attachments && parsed.attachments.length > 0;
 
+      // Detectar si es un mensaje del formulario de contacto y extraer el email del usuario
+      let emailFinal = deEmail;
+      let nombreFinal = deNombre;
+      let cuerpoFinal = cuerpoTexto;
+      
+      if (asunto && asunto.includes('Nuevo Mensaje de Contacto')) {
+        console.log('📧 [FORMULARIO] Detectado email del formulario de contacto');
+        console.log('📧 [FORMULARIO] Contenido original:', cuerpoTexto.substring(0, 200));
+        
+        // Extraer email del usuario del contenido
+        const emailMatch = cuerpoTexto.match(/Email:\s*([^\s\n]+@[^\s\n]+)/i);
+        if (emailMatch && emailMatch[1]) {
+          emailFinal = emailMatch[1].trim();
+          console.log('📧 [FORMULARIO] Email extraído:', emailFinal);
+        }
+        
+        // Extraer nombre del usuario del contenido
+        const nombreMatch = cuerpoTexto.match(/Nombre:\s*([^\n]+)/i);
+        if (nombreMatch && nombreMatch[1]) {
+          nombreFinal = nombreMatch[1].trim();
+          console.log('📧 [FORMULARIO] Nombre extraído:', nombreFinal);
+        }
+        
+        // Limpiar el contenido del mensaje (quitar metadatos y footer EmailJS)
+        // Buscar todo lo que viene después de "Mensaje:" (última ocurrencia)
+        const mensajeIndex = cuerpoTexto.lastIndexOf('Mensaje:');
+        
+        if (mensajeIndex !== -1) {
+          // Extraer desde "Mensaje:" hasta el final
+          let mensajeLimpio = cuerpoTexto.substring(mensajeIndex);
+          
+          // Eliminar la palabra "Mensaje:" y los saltos de línea que le siguen
+          mensajeLimpio = mensajeLimpio.replace(/^Mensaje:\s*\n*/i, '');
+          
+          // Eliminar el footer de EmailJS
+          mensajeLimpio = mensajeLimpio.replace(/Email sent via EmailJS\.com.*$/is, '');
+          
+          // Eliminar líneas de separación y espacios extra
+          mensajeLimpio = mensajeLimpio.replace(/\n{3,}/g, '\n\n'); // Max 2 saltos de línea
+          mensajeLimpio = mensajeLimpio.trim();
+          
+          cuerpoFinal = mensajeLimpio;
+          console.log('📧 [FORMULARIO] Mensaje limpio:', cuerpoFinal.substring(0, 100));
+        } else {
+          console.log('❌ [FORMULARIO] No se encontró "Mensaje:" en el contenido');
+        }
+      }
+
       // Guardar email principal
       const email = await prisma.email.create({
         data: {
           messageId,
-          deEmail,
-          deNombre,
+          deEmail: emailFinal,
+          deNombre: nombreFinal,
           paraEmails,
           asunto,
-          cuerpoTexto,
+          cuerpoTexto: cuerpoFinal,
           cuerpoHtml,
           prioridad,
           tieneAdjuntos,
@@ -128,12 +194,20 @@ class ImapService {
       // Guardar adjuntos si existen
       if (tieneAdjuntos) {
         for (const attachment of parsed.attachments) {
+          // Generar nombre de archivo si no existe
+          let nombreArchivo = attachment.filename;
+          if (!nombreArchivo || nombreArchivo.trim() === '') {
+            // Generar nombre basado en el tipo MIME
+            const extension = attachment.contentType?.split('/')[1] || 'bin';
+            nombreArchivo = `adjunto_${Date.now()}.${extension}`;
+          }
+          
           await prisma.emailAdjunto.create({
             data: {
               emailId: email.id,
-              nombreArchivo: attachment.filename,
-              mimeType: attachment.contentType,
-              tamano: attachment.size,
+              nombreArchivo: nombreArchivo,
+              mimeType: attachment.contentType || 'application/octet-stream',
+              tamano: attachment.size || 0,
               dataBase64: attachment.content.toString('base64')
             }
           });
@@ -145,7 +219,13 @@ class ImapService {
 
     } catch (error) {
       console.error('❌ Error guardando email:', error);
-      throw error;
+      console.error('📧 Email que causó el error:', {
+        messageId,
+        asunto: asunto?.substring(0, 50),
+        deEmail
+      });
+      // No hacer throw, solo retornar null para que continúe con otros emails
+      return null;
     }
   }
 

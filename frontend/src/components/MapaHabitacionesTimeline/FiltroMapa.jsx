@@ -40,6 +40,21 @@ export default function FiltroMapa({
             onChange={(e) => onFiltroChange('tipoHabitacion', e.target.value)}
           />
         </div>
+
+        <div className="filtro-mapa-field">
+          <label className="filtro-mapa-label">Nro. de Habitación</label>
+          <input 
+            type="text" 
+            className="filtro-mapa-input" 
+            placeholder="Escribir número de habitación..."
+            value={filtros.numeroHabitacion}
+            onChange={(e) => {
+              // Solo permitir números
+              const valor = e.target.value.replace(/[^0-9]/g, '');
+              onFiltroChange('numeroHabitacion', valor);
+            }}
+          />
+        </div>
       </div>
 
       {/* Botones de acción */}

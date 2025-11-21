@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "hotelriosaguavivaproyecto"
-  }
+    "default": "photel-app",
+    "prod": "photel-app"
+  },
+  "targets": {},
+  "etags": {}
 }

@@ -1,0 +1,46 @@
+================================================================================
+INFORME TÉCNICO - PROYECTO HOTEL
+Asignatura: Lenguajes IV
+================================================================================
+
+SOLICITUD:
+----------
+Se les solicita elaborar un informe técnico detallado, sobre las tecnologías 
+empleadas en el desarrollo del proyecto Hotel, correspondiente a la asignatura 
+Lenguajes IV.
+
+
+EL INFORME DEBE INCLUIR:
+------------------------
+
+1. TECNOLOGÍAS UTILIZADAS PARA EL DESARROLLO DEL FRONTEND
+   - Detallar frameworks, bibliotecas y herramientas utilizadas
+   - Justificar la elección de cada tecnología
+   - Describir cómo se implementaron en el proyecto
+
+2. TECNOLOGÍAS Y HERRAMIENTAS APLICADAS EN EL BACKEND
+   - Especificar lenguajes de programación utilizados
+   - Frameworks y bibliotecas del backend
+   - Herramientas de desarrollo y deployment
+   - Arquitectura del servidor
+
+3. GESTORES DE BASE DE DATOS Y ESQUEMAS IMPLEMENTADOS
+   - Sistema de gestión de base de datos utilizado
+   - Diseño del esquema de base de datos
+   - Modelos de datos implementados
+   - Relaciones entre tablas/colecciones
+
+4. APIs UTILIZADAS O DESARROLLADAS
+   - Indicar su propósito
+   - Describir el modo de integración
+   - Endpoints principales
+   - Métodos HTTP utilizados
+   - Formato de datos (JSON, XML, etc.)
+
+
+================================================================================
+NOTAS:
+------
+Este documento contiene los requisitos para el informe técnico del proyecto.
+El informe debe ser detallado y cubrir todos los puntos mencionados.
+================================================================================

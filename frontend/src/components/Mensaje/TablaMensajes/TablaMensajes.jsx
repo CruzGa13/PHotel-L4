@@ -117,7 +117,6 @@ export default function TablaMensajes({ mensajes = [], onVerDetalle, onMarcarRes
               <SortableHeader field="asunto">Asunto</SortableHeader>
               <SortableHeader field="remitente">Remitente</SortableHeader>
               <SortableHeader field="canal">Canal</SortableHeader>
-              <SortableHeader field="prioridad">Prioridad</SortableHeader>
               <SortableHeader field="fecha">Fecha</SortableHeader>
               <SortableHeader field="estado">Estado</SortableHeader>
               <th>Acciones</th>
@@ -144,19 +143,6 @@ export default function TablaMensajes({ mensajes = [], onVerDetalle, onMarcarRes
                     <span className={styles.canalBadge}>
                       <span className={styles.canalIcon}>{getCanalIcon(m.canal)}</span>
                       {m.canal}
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className={`${styles.prioridadBadge} ${
-                        m.prioridad === 'Alta'
-                          ? styles.prioridadAlta
-                          : m.prioridad === 'Media'
-                          ? styles.prioridadMedia
-                          : styles.prioridadBaja
-                      }`}
-                    >
-                      {m.prioridad}
                     </span>
                   </td>
                   <td className={styles.fechaCell}>{formatearFecha(m.fecha)}</td>
@@ -198,7 +184,7 @@ export default function TablaMensajes({ mensajes = [], onVerDetalle, onMarcarRes
               ))
             ) : (
               <tr>
-                <td colSpan="8" className={styles.emptyState}>
+                <td colSpan="7" className={styles.emptyState}>
                   <div className={styles.emptyIcon}>📭</div>
                   <p>No hay mensajes que coincidan con los filtros</p>
                 </td>

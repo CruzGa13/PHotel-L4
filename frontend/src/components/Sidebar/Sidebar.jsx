@@ -11,6 +11,9 @@ import {
   FaComments,
   FaCog,
   FaMap,
+  FaUsers,
+  FaDoorOpen,
+  FaChartBar,
 } from "react-icons/fa";
 import UserMenu from "../UserMenu/UserMenu";
 import { useAuth } from "../../context/AuthContext";
@@ -19,8 +22,10 @@ import "./Sidebar.css";
 const Sidebar = ({ isOpen, onClose, activeItem }) => {
   const { user } = useAuth();
   
-  // Verificar si el usuario es operador (case-insensitive)
-  const isOperador = user?.rol?.nombre?.toLowerCase() === "operador";
+  // Verificar roles (case-insensitive)
+  const rolNombre = user?.rol?.nombre?.toLowerCase();
+  const isOperador = rolNombre === "operador";
+  const isAdministrador = rolNombre === "administrador";
   
   const getMenuItemClass = (item) => {
     return `menu-item ${activeItem === item ? "active" : ""}`;
@@ -49,16 +54,12 @@ const Sidebar = ({ isOpen, onClose, activeItem }) => {
 
         {/* --- Navegación --- */}
         <nav className="sidebar-nav">
-          {/* Items para usuarios NO operadores (clientes) */}
-          {!isOperador && (
+          {/* Items para CLIENTES (no operadores ni administradores) */}
+          {!isOperador && !isAdministrador && (
             <>
               <Link to="/inicio" className={getMenuItemClass("inicio")}>
                 <FaHome className="menu-item-icon" />
                 <span className="menu-item-text">Inicio</span>
-              </Link>
-              <Link to="/habitaciones" className={getMenuItemClass("habitaciones")}>
-                <FaBed className="menu-item-icon" />
-                <span className="menu-item-text">Habitaciones</span>
               </Link>
               <Link to="/servicios" className={getMenuItemClass("servicios")}>
                 <FaConciergeBell className="menu-item-icon" />
@@ -75,7 +76,7 @@ const Sidebar = ({ isOpen, onClose, activeItem }) => {
             </>
           )}
 
-          {/* Items SOLO para operadores */}
+          {/* Items SOLO para OPERADORES */}
           {isOperador && (
             <>
               <div className="menu-separator">
@@ -97,6 +98,28 @@ const Sidebar = ({ isOpen, onClose, activeItem }) => {
               <Link to="/mensajes-op" className={getMenuItemClass("mensajes-op")}>
                 <FaComments className="menu-item-icon" />
                 <span className="menu-item-text">Mensajes</span>
+              </Link>
+            </>
+          )}
+
+          {/* Items SOLO para ADMINISTRADORES */}
+          {isAdministrador && (
+            <>
+              <div className="menu-separator">
+                <span>Panel de Administrador</span>
+              </div>
+
+              <Link to="/admin/consultas-graficos" className={getMenuItemClass("admin-consultas")}>
+                <FaChartBar className="menu-item-icon" />
+                <span className="menu-item-text">Consultas y Gráficos</span>
+              </Link>
+              <Link to="/crud-habitaciones" className={getMenuItemClass("crud-habitaciones")}>
+                <FaDoorOpen className="menu-item-icon" />
+                <span className="menu-item-text">Tipos de Habitación</span>
+              </Link>
+              <Link to="/operadores-op" className={getMenuItemClass("operadores-op")}>
+                <FaUsers className="menu-item-icon" />
+                <span className="menu-item-text">Operadores</span>
               </Link>
             </>
           )}
