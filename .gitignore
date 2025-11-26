@@ -1,5 +1,7 @@
 # Archivos generados
 *.md
+!RAILWAY_DEPLOY.md
+!README.md
 
 # Variables de entorno
 .env
